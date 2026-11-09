@@ -210,6 +210,30 @@ class TestScraperIngest(unittest.TestCase):
         self.assertEqual(detect_ats("https://careers.google.com/jobs/results/6"), "generic")
 
     @patch("src.scrapers.ingest.requests.get")
+    def test_extract_job_description_workday_cxs_tier1(self, mock_requests_get):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = {
+            "jobPostingInfo": {
+                "jobDescription": "<p>We are seeking a Software Engineering Intern at KLA to develop cutting-edge algorithms and C++ tools.</p><p>Requirements: Python, C++, Linux.</p>"
+            }
+        }
+        mock_requests_get.return_value = mock_resp
+
+        workday_url = "https://kla.wd1.myworkdayjobs.com/en-US/Search/job/Austin-TX/Software-Engineering-Intern_2642004-1?source=LinkedIn"
+        desc = extract_job_description(workday_url, ats_type="workday", enable_delay=False)
+
+        # Verify CXS API URL and headers
+        mock_requests_get.assert_called_once()
+        called_url = mock_requests_get.call_args[0][0]
+        called_headers = mock_requests_get.call_args[1]["headers"]
+
+        self.assertEqual(called_url, "https://kla.wd1.myworkdayjobs.com/wday/cxs/kla/Search/job/Austin-TX/Software-Engineering-Intern_2642004-1")
+        self.assertIn("application/json", called_headers["Accept"])
+        self.assertIn("Software Engineering Intern at KLA", desc)
+        self.assertIn("Python, C++, Linux", desc)
+
+    @patch("src.scrapers.ingest.requests.get")
     def test_extract_job_description_greenhouse_tier1(self, mock_requests_get):
         mock_resp = MagicMock()
         mock_resp.status_code = 200
@@ -333,6 +357,13 @@ class TestScraperIngest(unittest.TestCase):
         desc = extract_job_description("https://company.icims.com/jobs/1234/job", ats_type="icims", enable_delay=False)
         self.assertIn("iCIMS Software Engineer Intern", desc)
         self.assertIn("distributed services and REST APIs", desc)
+
+    @patch("src.scrapers.ingest.requests.get")
+    def test_extract_job_description_network_timeout_fallback(self, mock_requests_get):
+        mock_requests_get.side_effect = Exception("Connection timed out after 10 seconds")
+
+        desc = extract_job_description("https://failing-network.com/job/1", ats_type="generic", enable_delay=False)
+        self.assertEqual(desc, "Unable to extract job listing")
 
 
 if __name__ == "__main__":

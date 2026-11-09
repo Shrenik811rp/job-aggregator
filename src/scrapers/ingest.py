@@ -469,6 +469,44 @@ def _check_bot_challenge(text: str) -> None:
             raise BotChallengeException(f"Bot challenge detected with marker: '{marker}'")
 
 
+def _extract_workday_cxs_tier1(url: str) -> Optional[str]:
+    """Extract job description via Workday Candidate Experience Site (CXS) REST API."""
+    try:
+        pattern = re.compile(
+            r"https://([^.]+)(?:\.([^.]+))?\.myworkdayjobs\.com/(?:[a-zA-Z-]+/)?([^/]+)(/job/.*)",
+            re.IGNORECASE,
+        )
+        m = pattern.search(url)
+        if not m:
+            return None
+
+        tenant = m.group(1)
+        pod = m.group(2) or ""
+        site = m.group(3)
+        external_path = m.group(4).split("?")[0].rstrip("/")
+
+        host = f"{tenant}.{pod}.myworkdayjobs.com" if pod else f"{tenant}.myworkdayjobs.com"
+        cxs_url = f"https://{host}/wday/cxs/{tenant}/{site}{external_path}"
+
+        headers = {
+            "Accept": "application/json, text/plain, */*",
+            "User-Agent": REQUEST_HEADERS["User-Agent"],
+        }
+
+        resp = requests.get(cxs_url, headers=headers, timeout=10)
+        if resp.status_code == 200:
+            payload = resp.json()
+            raw_html = payload.get("jobPostingInfo", {}).get("jobDescription", "")
+            if raw_html:
+                soup = BeautifulSoup(raw_html, "html.parser")
+                text = soup.get_text(separator="\n").strip()
+                if len(text) >= 50:
+                    return text
+    except Exception as e:
+        logger.debug("Workday CXS Tier 1 extraction failed for %s: %s", url, e)
+    return None
+
+
 def _extract_greenhouse_tier1(url: str) -> Optional[str]:
     """Extract job description via Greenhouse Public Board API."""
     try:
@@ -588,7 +626,7 @@ def _extract_tier2_soup(url: str) -> Optional[str]:
         # Target standard job description containers
         candidate = (
             soup.find("main")
-            or soup.find("div", class_=re.compile(r"job-?description", re.I))
+            or soup.find("div", class_=re.compile(r"job-?description|posting-content", re.I))
             or soup.find("article")
             or soup.select_one("[class*='description']")
             or soup.select_one("[id*='description']")
@@ -598,13 +636,13 @@ def _extract_tier2_soup(url: str) -> Optional[str]:
         if candidate:
             text = candidate.get_text(separator="\n").strip()
             _check_bot_challenge(text)
-            if len(text) >= 100:
+            if len(text) >= 50:
                 return text
 
         if soup.body:
             text = soup.body.get_text(separator="\n").strip()
             _check_bot_challenge(text)
-            if len(text) >= 150:
+            if len(text) >= 50:
                 return text
     elif resp.status_code in (403, 503):
         _check_bot_challenge(resp.text)
@@ -642,14 +680,14 @@ def _extract_tier3_playwright(url: str, ats_type: str = "") -> Optional[str]:
                         try:
                             frame_text = frame.evaluate("document.body.innerText") or ""
                             _check_bot_challenge(frame_text)
-                            if frame_text and len(frame_text.strip()) >= 100:
+                            if frame_text and len(frame_text.strip()) >= 50:
                                 return frame_text.strip()
                         except BotChallengeException:
                             raise
                         except Exception:
                             continue
 
-                if main_text and len(main_text.strip()) >= 100:
+                if main_text and len(main_text.strip()) >= 50:
                     return main_text.strip()
             finally:
                 browser.close()
@@ -661,10 +699,10 @@ def _extract_tier3_playwright(url: str, ats_type: str = "") -> Optional[str]:
 
 
 def extract_job_description(url: str, ats_type: str = "", enable_delay: bool = True) -> str:
-    """Extract job description using tiered strategy:
-    Tier 1: Safe JSON APIs (Greenhouse, Lever, Ashby)
+    """Extract job description using API-first tiered strategy:
+    Tier 1: Direct ATS Backend JSON APIs (Workday CXS, Greenhouse, Lever, Ashby)
     Tier 2: Requests + BeautifulSoup HTML parser with bot-challenge detection
-    Tier 3: Playwright Headless Browser fallback with iframe extraction
+    Tier 3: Playwright Headless Browser fallback
     Emergency Fallback: "Unable to extract job listing"
     """
     if enable_delay:
@@ -674,36 +712,40 @@ def extract_job_description(url: str, ats_type: str = "", enable_delay: bool = T
         ats_type = detect_ats(url)
 
     try:
-        # --- Tier 1: ATS Public JSON APIs ---
-        if ats_type == "greenhouse":
+        # --- Tier 1: Direct ATS Backend JSON APIs ---
+        if ats_type == "workday" or "myworkdayjobs.com" in url.lower():
+            result = _extract_workday_cxs_tier1(url)
+            if result and len(result.strip()) >= 50:
+                return result.strip()
+        elif ats_type == "greenhouse" or "greenhouse.io" in url.lower():
             result = _extract_greenhouse_tier1(url)
-            if result:
-                return result
-        elif ats_type == "lever":
+            if result and len(result.strip()) >= 50:
+                return result.strip()
+        elif ats_type == "lever" or "lever.co" in url.lower():
             result = _extract_lever_tier1(url)
-            if result:
-                return result
-        elif ats_type == "ashby":
+            if result and len(result.strip()) >= 50:
+                return result.strip()
+        elif ats_type == "ashby" or "ashbyhq.com" in url.lower():
             result = _extract_ashby_tier1(url)
-            if result:
-                return result
+            if result and len(result.strip()) >= 50:
+                return result.strip()
 
-        # --- Tier 2: Requests + BeautifulSoup ---
+        # --- Tier 2: Requests + BeautifulSoup with Bot-Challenge Detection ---
         try:
             result = _extract_tier2_soup(url)
-            if result:
-                return result
+            if result and len(result.strip()) >= 50:
+                return result.strip()
         except BotChallengeException as bce:
             logger.warning("Bot challenge detected on %s during Tier 2. Aborting extraction: %s", url, bce)
             return "Unable to extract job listing"
         except Exception as e:
             logger.debug("Tier 2 extraction failed for %s: %s", url, e)
 
-        # --- Tier 3: Playwright Headless (only if not blocked by bot challenge) ---
+        # --- Tier 3: Playwright Headless Fallback ---
         try:
             result = _extract_tier3_playwright(url, ats_type=ats_type)
-            if result:
-                return result
+            if result and len(result.strip()) >= 50:
+                return result.strip()
         except BotChallengeException as bce:
             logger.warning("Bot challenge detected on %s during Tier 3. Aborting extraction: %s", url, bce)
             return "Unable to extract job listing"
