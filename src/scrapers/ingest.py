@@ -346,9 +346,9 @@ def is_excessive_seniority(text: str) -> bool:
 
 def get_location_rank(location: str) -> Optional[int]:
     """Classify location priority:
-    Rank 1: Texas locations (Dallas, Richardson, Austin, Houston, Plano, Irving, Fort Worth)
-    Rank 2: US Remote / Nationwide Remote / Worldwide Remote
-    Rank 3: Other US locations
+    Rank 1: Texas locations (Dallas, Richardson, Austin, Houston, Plano, Irving, Fort Worth, TX)
+    Rank 2: Remote (US Remote, Nationwide Remote, Worldwide Remote, Anywhere, WFH)
+    Rank 3: All other US locations (CA, NY, WA, IL, MA, GA, etc. or unspecified/USA)
     None: Discard non-US listings unless marked Remote/Worldwide
     """
     if not location:
@@ -356,7 +356,7 @@ def get_location_rank(location: str) -> Optional[int]:
 
     loc_lower = location.lower().strip()
 
-    # 1. Texas check
+    # 1. Texas check (Highest priority: Texas first)
     for kw in TEXAS_KEYWORDS:
         if kw == "tx":
             if re.search(r'\btx\b', loc_lower):
@@ -364,25 +364,44 @@ def get_location_rank(location: str) -> Optional[int]:
         elif kw in loc_lower:
             return 1
 
-    # 2. Remote check
+    # 2. Remote check (Second priority)
+    is_remote = False
     for kw in REMOTE_KEYWORDS:
         if kw in loc_lower:
-            return 2
+            is_remote = True
+            break
 
     # 3. Non-US check
+    is_non_us = False
     for kw in NON_US_KEYWORDS:
         if len(kw) <= 3:
             if re.search(rf'\b{re.escape(kw)}\b', loc_lower):
-                return None
+                is_non_us = True
+                break
         elif kw in loc_lower:
-            return None
+            is_non_us = True
+            break
 
-    # 4. Other US location
+    # Discard explicitly non-US jobs unless marked Remote/Worldwide
+    if is_non_us and not is_remote:
+        return None
+
+    if is_remote:
+        return 2
+
+    # 4. All other US locations (CA, NY, WA, etc.)
     return 3
 
 
 def filter_and_sort_jobs(raw_jobs: List[Dict[str, str]], existing_links: Set[str]) -> List[Dict[str, str]]:
-    """Deduplicate against existing links, filter by role/seniority, and sort by location priority."""
+    """Deduplicate against existing links, filter by role/seniority, and sort by location priority.
+
+    Accepts all jobs located anywhere in the United States or marked as Remote.
+    Sorting priority:
+      1. Texas (TX, Dallas, Austin, etc.)
+      2. Remote (US Remote, Anywhere)
+      3. All other US locations (CA, NY, WA, etc.)
+    """
     seen_urls = set(existing_links)
     filtered_jobs: List[Dict[str, str]] = []
 

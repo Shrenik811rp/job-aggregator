@@ -121,17 +121,23 @@ class TestTailoringEngine(unittest.TestCase):
         mock_resume_resp = MagicMock()
         mock_resume_resp.text = (
             "<summary>\n"
-            r"Tailored for AT&T with 15% efficiency." + "\n"
+            r"Cloud DevOps Engineer specializing in Kubernetes, Terraform, AWS, and CI/CD pipelines with 10\% speedup." + "\n"
             "</summary>\n"
             "<experience>\n"
             r"\noindent\small \textbf{o9 Solutions, Inc.} \hfill Jan 2023 to Aug 2025 \\" + "\n"
             r"\textit{Software & Infrastructure Systems Engineer} \hfill \textit{Remote}" + "\n"
             r"\begin{itemize}" + "\n"
-            r"\item Accelerated partner onboarding at AT&T with 15% speedup." + "\n"
+            r"\item Accelerated partner onboarding speed by \textbf{10\%} across Kubernetes clusters with AT&T." + "\n"
+            r"\item Reduced Mean Time to Resolve (MTTR) by \textbf{14\%} for complex integration blockers." + "\n"
+            r"\item Cut environment drift by \textbf{12\%} across \textbf{50+ virtualized Linux nodes}." + "\n"
+            r"\item Handled \textbf{50GB+ daily sensor telemetry} using Terraform and AWS pipelines." + "\n"
             r"\end{itemize}" + "\n"
             "</experience>\n"
+            "<projects>\n"
+            r"\item Decreased runtime execution failures by \textbf{10\%} by architecting real-time telemetry dashboards." + "\n"
+            "</projects>\n"
             "<skills>\n"
-            r"\noindent\small \textbf{Programming Languages:} Python, Go, C++" + "\n"
+            r"\noindent\small \textbf{Programming Languages:} Python, Go, C++, Kubernetes, AWS, Terraform, Docker, CI/CD" + "\n"
             "</skills>"
         )
 
@@ -151,18 +157,20 @@ class TestTailoringEngine(unittest.TestCase):
 
         resume, cl = tailor_application(
             job_title="DevOps Engineer",
-            job_description="Seeking a Cloud DevOps Engineer with Kubernetes.",
+            job_description="Seeking a Cloud DevOps Engineer with Kubernetes, Terraform, AWS, CI/CD, and Docker.",
             ats_type="workday",
         )
 
         # Ensure content was tailored and properly sanitized
         self.assertIn(r"\documentclass", resume)
         self.assertIn(r"AT\&T", resume)
-        self.assertIn(r"15\%", resume)
+        self.assertIn(r"10\%", resume)
+        self.assertIn(r"14\%", resume)
         self.assertIn("SHRENIK PILLAI", resume)
         self.assertIn("EDUCATION", resume)
 
         self.assertIn(r"\documentclass", cl)
+        self.assertIn("Cloud DevOps Engineer Hiring Team \\", cl)
         self.assertIn("Google \\", cl)
         self.assertIn("Dear Google Team,", cl)
         self.assertIn("Paragraph 1 applying to Google", cl)
@@ -177,23 +185,32 @@ class TestTailoringEngine(unittest.TestCase):
         # Fallback model succeeds with XML tags
         mock_fb_resume = MagicMock()
         mock_fb_resume.text = (
-            "<summary>\nTailored resume via fallback model.\n</summary>\n"
-            "<skills>\nTechnical skills via fallback.\n</skills>"
+            "<summary>\nTailored Cloud DevOps resume via fallback model with Kubernetes, AWS, and Python.\n</summary>\n"
+            "<experience>\n"
+            r"\item Accelerated throughput by \textbf{10\%} and cut MTTR by \textbf{14\%} on 50GB+ systems." "\n"
+            r"\item Cut environment drift by \textbf{12\%} across 50+ Linux nodes." "\n"
+            "</experience>\n"
+            "<projects>\n"
+            r"\item Engineered cloud infrastructure telemetry dashboards.\n"
+            "</projects>\n"
+            "<skills>\nKubernetes, AWS, Terraform, Docker, Python, CI/CD\n</skills>"
         )
         mock_fb_cl = MagicMock()
         mock_fb_cl.text = (
             "<company>Amazon</company>\n"
+            "<role>Cloud DevOps Engineer</role>\n"
             "<body_paragraphs>\nTailored cover letter via fallback model.\n</body_paragraphs>"
         )
         mock_fallback_model.generate_content.side_effect = [mock_fb_resume, mock_fb_cl]
 
         resume, cl = tailor_application(
             job_title="DevOps Engineer",
-            job_description="Seeking a Cloud DevOps Engineer.",
+            job_description="Seeking a Cloud DevOps Engineer with Kubernetes, AWS, Docker, Python, and Terraform.",
             ats_type="greenhouse",
         )
 
-        self.assertIn("Tailored resume via fallback model", resume)
+        self.assertIn("Tailored Cloud DevOps resume via fallback model", resume)
+        self.assertIn("Amazon \\", cl)
         self.assertIn("Dear Amazon Team,", cl)
         self.assertIn("Tailored cover letter via fallback model", cl)
         self.assertEqual(mock_fallback_model.generate_content.call_count, 2)
@@ -266,20 +283,61 @@ class TestTailoringEngine(unittest.TestCase):
         self.assertEqual(cl, base_cl)
 
     @patch("src.tailoring.engine.model")
+    def test_tailor_application_qc_validation_failure_fallback(self, mock_model):
+        base_resume = get_template_for_role("DevOps Engineer")
+        base_cl = get_base_cover_letter()
+
+        # Response contains blacklisted AI buzzword 'spearheaded'
+        mock_resume_resp = MagicMock()
+        mock_resume_resp.text = (
+            "<summary>DevOps engineer</summary>\n"
+            "<experience>I spearheaded the Kubernetes infrastructure initiative.</experience>\n"
+            "<projects>Project 1</projects>\n"
+            "<skills>Python, Kubernetes</skills>"
+        )
+        mock_cl_resp = MagicMock()
+        mock_cl_resp.text = "<company>Acme</company><body_paragraphs>Paragraph</body_paragraphs>"
+
+        mock_model.generate_content.side_effect = [mock_resume_resp, mock_cl_resp]
+
+        res, cl = tailor_application(
+            job_title="DevOps Engineer",
+            job_description="Seeking a Cloud DevOps Engineer with Kubernetes.",
+            ats_type="workday",
+        )
+
+        # Must discard and revert to base templates due to QC failure
+        self.assertEqual(res, base_resume)
+        self.assertEqual(cl, base_cl)
+
+    @patch("src.tailoring.engine.model")
     def test_tailor_application_preserves_preamble_and_layout(self, mock_model):
         base_resume = get_template_for_role("Software Engineer")
         base_cl = get_base_cover_letter()
 
         mock_resume_resp = MagicMock()
-        mock_resume_resp.text = "<summary>Tailored summary.</summary><skills>Tailored skills.</skills>"
+        mock_resume_resp.text = (
+            "<summary>Tailored Software Engineer summary with Distributed Systems and Python.</summary>\n"
+            "<experience>\n"
+            r"\item Accelerated speed by \textbf{10\%} and reduced MTTR by \textbf{14\%} on 50GB+ daily data." "\n"
+            "</experience>\n"
+            "<projects>\n"
+            r"\item Built automated distributed telemetry pipelines.\n"
+            "</projects>\n"
+            "<skills>\nPython, C++, Distributed Systems, RESTful APIs, Docker, Kubernetes\n</skills>"
+        )
         mock_cl_resp = MagicMock()
-        mock_cl_resp.text = "<company>Meta</company><body_paragraphs>Paragraph 1.\n\nParagraph 2.</body_paragraphs>"
+        mock_cl_resp.text = (
+            "<company>Meta</company>\n"
+            "<role>Software Engineer</role>\n"
+            "<body_paragraphs>Paragraph 1.\n\nParagraph 2.</body_paragraphs>"
+        )
 
         mock_model.generate_content.side_effect = [mock_resume_resp, mock_cl_resp]
 
         resume, cl = tailor_application(
             job_title="Software Engineer",
-            job_description="Software Engineer role.",
+            job_description="Software Engineer role with Python, C++, Distributed Systems, and RESTful APIs.",
             ats_type="generic",
         )
 
@@ -291,6 +349,56 @@ class TestTailoringEngine(unittest.TestCase):
         base_cl_preamble = base_cl[: base_cl.find(r"\begin{document}")]
         tailored_cl_preamble = cl[: cl.find(r"\begin{document}")]
         self.assertEqual(base_cl_preamble, tailored_cl_preamble)
+
+    @patch("src.tailoring.engine.model")
+    def test_cover_letter_placeholder_replacement(self, mock_model):
+        base_resume = get_template_for_role("Software Engineer")
+
+        mock_resume_resp = MagicMock()
+        mock_resume_resp.text = (
+            "<summary>Software Engineer with Python, C++, Distributed Systems, and RESTful APIs.</summary>\n"
+            "<experience>\n"
+            r"\item Accelerated throughput by \textbf{10\%} and cut MTTR by \textbf{14\%} on 50GB+ systems." "\n"
+            r"\item Reduced friction by \textbf{12\%} across \textbf{50+ nodes}." "\n"
+            "</experience>\n"
+            "<projects>\n"
+            r"\item Engineered automated telemetry pipelines.\n"
+            "</projects>\n"
+            "<skills>\nPython, C++, Distributed Systems, RESTful APIs, Docker, Kubernetes\n</skills>"
+        )
+
+        mock_cl_resp = MagicMock()
+        mock_cl_resp.text = (
+            "<company>Apple</company>\n"
+            "<role>Machine Learning Infrastructure Engineer</role>\n"
+            "<body_paragraphs>\n"
+            "Tailored body paragraph 1 for Apple ML Infra role.\n\n"
+            "Tailored body paragraph 2 demonstrating scale.\n\n"
+            "Tailored body paragraph 3 describing teamwork.\n\n"
+            "Tailored body paragraph 4 closing call to action." "\n"
+            "</body_paragraphs>"
+        )
+
+        mock_model.generate_content.side_effect = [mock_resume_resp, mock_cl_resp]
+
+        _, cl = tailor_application(
+            job_title="Software Engineer",
+            job_description="Software Engineer with Python, C++, Distributed Systems, and RESTful APIs.",
+            ats_type="workday",
+        )
+
+        # GFT / Target Organization replaced
+        self.assertNotIn("GFT", cl)
+        self.assertNotIn("Target Organization", cl)
+        self.assertIn("Apple \\", cl)
+        self.assertIn("Dear Apple Team,", cl)
+
+        # Generic Hiring Manager / Team line replaced with role hiring team
+        self.assertIn("Machine Learning Infrastructure Engineer Hiring Team \\", cl)
+
+        # Body paragraphs injected
+        self.assertIn("Tailored body paragraph 1 for Apple ML Infra role.", cl)
+        self.assertIn("Sincerely,", cl)
 
 
 if __name__ == "__main__":

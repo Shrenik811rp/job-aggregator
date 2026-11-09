@@ -82,10 +82,10 @@ def run_pipeline(limit: Optional[int] = None, enable_delay: bool = True) -> Dict
     raw_jobs = fetch_raw_jobs()
     logger.info("Ingested %d total raw listings across all sources.", len(raw_jobs))
 
-    logger.info("Filtering and prioritizing new jobs (Texas -> US Remote -> Other US)...")
+    logger.info("Filtering and prioritizing new jobs across US (Texas -> US Remote -> All Other US)...")
     filtered_jobs = filter_and_sort_jobs(raw_jobs, existing_links)
     metrics["scraped"] = len(filtered_jobs)
-    logger.info("Identified %d new eligible jobs matching technical criteria.", len(filtered_jobs))
+    logger.info("Identified %d new eligible jobs matching technical criteria across all US locations.", len(filtered_jobs))
 
     if not filtered_jobs:
         logger.info("No new matching jobs to process. Execution complete.")

@@ -151,11 +151,9 @@ def build_tailoring_prompt(
             "STRICT LAYOUT-LOCKING RULES FOR COVER LETTER (NON-NEGOTIABLE):\n"
             "- DO NOT output the full LaTeX document. DO NOT output the preamble, documentclass, candidate contact header, date line, or closing signature block.\n"
             "- Output ONLY the target company name, role, and the tailored body paragraphs wrapped in the following XML tags:\n"
-            "  <company>[Target Company Name]</company>\n"
-            "  <role>[Target Job Title]</role>\n"
-            "  <body_paragraphs>\n"
-            "  [The 4 tailored body paragraphs here separated by blank lines]\n"
-            "  </body_paragraphs>\n"
+            "  <company> [Target Company Name] </company>\n"
+            "  <role> [Target Job Title] </role>\n"
+            "  <body_paragraphs> [The tailored body paragraphs] </body_paragraphs>\n"
             "- The 4 body paragraphs must cover:\n"
             "  * Paragraph 1: Direct application to [Company] for [Role], citing 1-2 core technical alignments.\n"
             "  * Paragraph 2: Core technical achievements and engineering scale mapped to the JD's primary challenge.\n"
@@ -298,36 +296,52 @@ def tailor_application(job_title: str, job_description: str, ats_type: str) -> T
         tag_projects = _extract_tag(raw_resume, "projects")
         tag_skills = _extract_tag(raw_resume, "skills")
 
-        # Guardrail: Check if valid sections were returned
-        if not tag_experience and not tag_skills and not tag_summary:
-            logger.warning("No valid XML section tags found in resume response. Reverting to base resume.")
-            tailored_resume = base_resume
-        else:
-            tailored_resume = base_resume
-            if tag_summary:
-                tailored_resume = _inject_section(
-                    tailored_resume,
-                    r"\\section\*\{(?:PROFESSIONAL\s+)?SUMMARY\}",
-                    sanitize_latex(tag_summary),
-                )
-            if tag_experience:
-                tailored_resume = _inject_section(
-                    tailored_resume,
-                    r"\\section\*\{(?:WORK|PROFESSIONAL)\s+EXPERIENCE\}",
-                    sanitize_latex(tag_experience),
-                )
-            if tag_projects:
-                tailored_resume = _inject_section(
-                    tailored_resume,
-                    r"\\section\*\{(?:PROJECT\s+EXPERIENCE|PROJECTS|DATA\s+ENGINEERING\s+PROJECTS)\}",
-                    sanitize_latex(tag_projects),
-                )
-            if tag_skills:
-                tailored_resume = _inject_section(
-                    tailored_resume,
-                    r"\\section\*\{TECHNICAL\s+SKILLS\}",
-                    sanitize_latex(tag_skills),
-                )
+        extracted_resume_xml = {
+            "summary": tag_summary,
+            "experience": tag_experience,
+            "projects": tag_projects,
+            "skills": tag_skills,
+        }
+
+        # Rigorous Quality Control Validation on Gemini's output
+        from src.tailoring.validator import validate_tailored_content
+
+        if not validate_tailored_content(extracted_resume_xml, job_description, base_resume):
+            logger.warning(
+                "QC Validation failed for tailored resume content. Discarding output and reverting to base templates."
+            )
+            return base_resume, base_cover_letter
+
+        tag_summary = extracted_resume_xml["summary"]
+        tag_experience = extracted_resume_xml["experience"]
+        tag_projects = extracted_resume_xml["projects"]
+        tag_skills = extracted_resume_xml["skills"]
+
+        tailored_resume = base_resume
+        if tag_summary:
+            tailored_resume = _inject_section(
+                tailored_resume,
+                r"\\section\*\{(?:PROFESSIONAL\s+)?SUMMARY\}",
+                sanitize_latex(tag_summary),
+            )
+        if tag_experience:
+            tailored_resume = _inject_section(
+                tailored_resume,
+                r"\\section\*\{(?:WORK|PROFESSIONAL)\s+EXPERIENCE\}",
+                sanitize_latex(tag_experience),
+            )
+        if tag_projects:
+            tailored_resume = _inject_section(
+                tailored_resume,
+                r"\\section\*\{(?:PROJECT\s+EXPERIENCE|PROJECTS|DATA\s+ENGINEERING\s+PROJECTS)\}",
+                sanitize_latex(tag_projects),
+            )
+        if tag_skills:
+            tailored_resume = _inject_section(
+                tailored_resume,
+                r"\\section\*\{TECHNICAL\s+SKILLS\}",
+                sanitize_latex(tag_skills),
+            )
 
         # Generate tailored cover letter
         cl_prompt = build_tailoring_prompt(
@@ -341,21 +355,53 @@ def tailor_application(job_title: str, job_description: str, ats_type: str) -> T
 
         # Extract XML tags for cover letter
         tag_company = _extract_tag(raw_cl, "company")
+        tag_role = _extract_tag(raw_cl, "role")
         tag_body = _extract_tag(raw_cl, "body_paragraphs")
 
         if not tag_body:
             logger.warning("Missing <body_paragraphs> XML tag in cover letter response. Reverting to base cover letter.")
             tailored_cover_letter = base_cover_letter
         else:
-            company_name = sanitize_latex(tag_company) if tag_company else "Target Organization"
-            tailored_cover_letter = base_cover_letter.replace("GFT", company_name)
-            cl_pattern = r"(Dear\s+[^\n]+,\s*\n\s*)(.*?)(\n\s*\\vspace\{10pt\}\s*\n\s*Sincerely,)"
+            company_name = sanitize_latex(tag_company.strip()) if tag_company and tag_company.strip() else "Target Organization"
+            role_name = sanitize_latex(tag_role.strip()) if tag_role and tag_role.strip() else sanitize_latex(job_title)
+
+            tailored_cover_letter = base_cover_letter
+
+            # Surgically replace company placeholders
+            tailored_cover_letter = tailored_cover_letter.replace("Target Organization", company_name)
+            tailored_cover_letter = tailored_cover_letter.replace("GFT", company_name)
+
+            # Surgically replace generic Hiring Team / Manager lines with role-specific hiring team
+            tailored_cover_letter = re.sub(
+                r'Campus Recruiting Team\s*/\s*Hiring Manager',
+                f"{role_name} Hiring Team",
+                tailored_cover_letter,
+            )
+            tailored_cover_letter = re.sub(
+                r'(?<!\bDear\s)(?<!\w)Hiring Team(?!\w)',
+                f"{role_name} Hiring Team",
+                tailored_cover_letter,
+            )
+            tailored_cover_letter = re.sub(
+                r'Dear\s+(?:Hiring|Target\s+Organization)\s+Team,',
+                f"Dear {company_name} Team,",
+                tailored_cover_letter,
+            )
+
+            # Surgically inject <body_paragraphs> between Dear [^\n]+,\s*\n\s* and \n\s*\\vspace\{(?:1em|10pt|[^\}]+)\}\s*\n\s*Sincerely
+            cl_pattern = r"(Dear\s+[^\n]+,\s*\n\s*)(.*?)(\n\s*\\vspace\{(?:1em|10pt|[^\}]+)\}\s*\n\s*Sincerely,?\b)"
             m = re.search(cl_pattern, tailored_cover_letter, re.DOTALL)
             if m:
-                clean_body = sanitize_latex(tag_body)
-                tailored_cover_letter = tailored_cover_letter[:m.start(2)] + clean_body + tailored_cover_letter[m.end(2):]
+                clean_body = sanitize_latex(tag_body.strip())
+                tailored_cover_letter = (
+                    tailored_cover_letter[: m.start(2)]
+                    + clean_body
+                    + tailored_cover_letter[m.end(2) :]
+                )
             else:
-                logger.warning("Failed to locate body paragraphs insertion point in cover letter template. Reverting to base.")
+                logger.warning(
+                    "Failed to locate body paragraphs insertion point in cover letter template. Reverting to base."
+                )
                 tailored_cover_letter = base_cover_letter
 
         # Final sanity checks: verify output contains documentclass
