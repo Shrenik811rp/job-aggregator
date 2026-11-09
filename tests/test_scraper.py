@@ -289,6 +289,51 @@ class TestScraperIngest(unittest.TestCase):
         desc = extract_job_description("https://blocked-cloudflare.com/job/1", ats_type="generic", enable_delay=False)
         self.assertEqual(desc, "Unable to extract job listing")
 
+    @patch("src.scrapers.ingest._extract_tier3_playwright")
+    @patch("src.scrapers.ingest.requests.get")
+    def test_extract_job_description_bot_challenge_in_tier2_aborts(self, mock_requests_get, mock_tier3):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 403
+        mock_resp.text = "<html><head><title>Attention Required! | Cloudflare</title></head><body>verifies you are not a bot</body></html>"
+        mock_requests_get.return_value = mock_resp
+
+        desc = extract_job_description("https://citadel.myworkdayjobs.com/job/1", ats_type="workday", enable_delay=False)
+
+        # Must return fallback string and NEVER call Tier 3
+        self.assertEqual(desc, "Unable to extract job listing")
+        mock_tier3.assert_not_called()
+
+    @patch("playwright.sync_api.sync_playwright")
+    @patch("src.scrapers.ingest._extract_tier2_soup")
+    def test_extract_job_description_icims_iframe_playwright(self, mock_tier2, mock_sync_playwright):
+        mock_tier2.return_value = None
+
+        mock_playwright = MagicMock()
+        mock_browser = MagicMock()
+        mock_page = MagicMock()
+        mock_main_frame = MagicMock()
+        mock_child_frame = MagicMock()
+
+        mock_sync_playwright.return_value.__enter__.return_value = mock_playwright
+        mock_playwright.chromium.launch.return_value = mock_browser
+        mock_browser.new_page.return_value = mock_page
+
+        # Main frame text is short shell
+        mock_page.content.return_value = "<html><body>Loading portal...</body></html>"
+        mock_page.evaluate.return_value = "Loading portal shell..."
+        mock_page.main_frame = mock_main_frame
+
+        # Child frame has full job description
+        mock_child_frame.evaluate.return_value = (
+            "We are looking for an iCIMS Software Engineer Intern to build distributed services and REST APIs in Python. "
+            "You will collaborate across engineering teams and contribute to high scale systems."
+        )
+        mock_page.frames = [mock_main_frame, mock_child_frame]
+
+        desc = extract_job_description("https://company.icims.com/jobs/1234/job", ats_type="icims", enable_delay=False)
+        self.assertIn("iCIMS Software Engineer Intern", desc)
+        self.assertIn("distributed services and REST APIs", desc)
+
 
 if __name__ == "__main__":
     unittest.main()

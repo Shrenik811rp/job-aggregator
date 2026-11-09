@@ -444,6 +444,31 @@ def detect_ats(url: str) -> str:
     return "generic"
 
 
+BOT_CHALLENGE_MARKERS = [
+    "cf-browser-verification",
+    "challenges.cloudflare.com",
+    "Attention Required! | Cloudflare",
+    "verifies you are not a bot",
+    "Just a moment...",
+    "Cloudflare Ray ID",
+]
+
+
+class BotChallengeException(Exception):
+    """Raised when an anti-bot challenge or Cloudflare gate is detected."""
+    pass
+
+
+def _check_bot_challenge(text: str) -> None:
+    """Check text for anti-bot challenge markers and raise BotChallengeException if found."""
+    if not text:
+        return
+    text_lower = text.lower()
+    for marker in BOT_CHALLENGE_MARKERS:
+        if marker.lower() in text_lower:
+            raise BotChallengeException(f"Bot challenge detected with marker: '{marker}'")
+
+
 def _extract_greenhouse_tier1(url: str) -> Optional[str]:
     """Extract job description via Greenhouse Public Board API."""
     try:
@@ -547,41 +572,52 @@ def _extract_ashby_tier1(url: str) -> Optional[str]:
 
 
 def _extract_tier2_soup(url: str) -> Optional[str]:
-    """Extract job description via standard requests + BeautifulSoup parsing."""
-    try:
-        resp = requests.get(url, headers=REQUEST_HEADERS, timeout=10)
-        if resp.status_code == 200:
-            soup = BeautifulSoup(resp.text, "html.parser")
-            for elem in soup(["script", "style", "nav", "footer", "header", "noscript"]):
-                elem.extract()
+    """Extract job description via standard requests + BeautifulSoup parsing.
 
-            # Target standard job description semantic tags and classnames
-            selectors = [
-                "main",
-                "article",
-                "[class*='description']",
-                "[id*='description']",
-                "[class*='jobDescription']",
-                "[class*='posting-content']",
-            ]
-            for sel in selectors:
-                candidate = soup.select_one(sel)
-                if candidate:
-                    text = candidate.get_text(separator="\n").strip()
-                    if len(text) >= 100:
-                        return text
+    Raises BotChallengeException if anti-bot challenge is detected.
+    """
+    resp = requests.get(url, headers=REQUEST_HEADERS, timeout=10)
+    if resp.status_code == 200:
+        # Check for bot challenge in raw response
+        _check_bot_challenge(resp.text)
 
-            if soup.body:
-                text = soup.body.get_text(separator="\n").strip()
-                if len(text) >= 150:
-                    return text
-    except Exception as e:
-        logger.debug("Tier 2 extraction failed for %s: %s", url, e)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        for elem in soup(["script", "style", "nav", "footer", "header", "noscript"]):
+            elem.extract()
+
+        # Target standard job description containers
+        candidate = (
+            soup.find("main")
+            or soup.find("div", class_=re.compile(r"job-?description", re.I))
+            or soup.find("article")
+            or soup.select_one("[class*='description']")
+            or soup.select_one("[id*='description']")
+            or soup.select_one("[class*='jobDescription']")
+            or soup.select_one("[class*='posting-content']")
+        )
+        if candidate:
+            text = candidate.get_text(separator="\n").strip()
+            _check_bot_challenge(text)
+            if len(text) >= 100:
+                return text
+
+        if soup.body:
+            text = soup.body.get_text(separator="\n").strip()
+            _check_bot_challenge(text)
+            if len(text) >= 150:
+                return text
+    elif resp.status_code in (403, 503):
+        _check_bot_challenge(resp.text)
+
     return None
 
 
-def _extract_tier3_playwright(url: str) -> Optional[str]:
-    """Extract job description via headless Chromium for dynamic JS-rendered sites."""
+def _extract_tier3_playwright(url: str, ats_type: str = "") -> Optional[str]:
+    """Extract job description via headless Chromium for dynamic JS-rendered sites.
+
+    - Supports iCIMS multi-frame inspection.
+    - Aborts and raises BotChallengeException if a challenge screen is detected.
+    """
     try:
         from playwright.sync_api import sync_playwright
 
@@ -591,11 +627,34 @@ def _extract_tier3_playwright(url: str) -> Optional[str]:
                 page = browser.new_page()
                 page.goto(url, timeout=15000, wait_until="domcontentloaded")
                 page.wait_for_timeout(2000)
-                text = page.evaluate("document.body.innerText")
-                if text and len(text.strip()) >= 100:
-                    return text.strip()
+
+                # Check page content for bot challenge
+                content = page.content()
+                _check_bot_challenge(content)
+
+                main_text = page.evaluate("document.body.innerText") or ""
+                _check_bot_challenge(main_text)
+
+                # If ats_type is icims or main body is unusually short, inspect child frames
+                if ats_type == "icims" or len(main_text.strip()) < 150:
+                    child_frames = [f for f in page.frames if f != getattr(page, "main_frame", None)]
+                    for frame in child_frames:
+                        try:
+                            frame_text = frame.evaluate("document.body.innerText") or ""
+                            _check_bot_challenge(frame_text)
+                            if frame_text and len(frame_text.strip()) >= 100:
+                                return frame_text.strip()
+                        except BotChallengeException:
+                            raise
+                        except Exception:
+                            continue
+
+                if main_text and len(main_text.strip()) >= 100:
+                    return main_text.strip()
             finally:
                 browser.close()
+    except BotChallengeException:
+        raise
     except Exception as e:
         logger.warning("Tier 3 Playwright extraction failed for %s: %s", url, e)
     return None
@@ -604,9 +663,9 @@ def _extract_tier3_playwright(url: str) -> Optional[str]:
 def extract_job_description(url: str, ats_type: str = "", enable_delay: bool = True) -> str:
     """Extract job description using tiered strategy:
     Tier 1: Safe JSON APIs (Greenhouse, Lever, Ashby)
-    Tier 2: Requests + BeautifulSoup HTML parser
-    Tier 3: Playwright Headless Browser fallback
-    Fallback: "Unable to extract job listing"
+    Tier 2: Requests + BeautifulSoup HTML parser with bot-challenge detection
+    Tier 3: Playwright Headless Browser fallback with iframe extraction
+    Emergency Fallback: "Unable to extract job listing"
     """
     if enable_delay:
         time.sleep(random.uniform(1.5, 3.5))
@@ -614,29 +673,45 @@ def extract_job_description(url: str, ats_type: str = "", enable_delay: bool = T
     if not ats_type:
         ats_type = detect_ats(url)
 
-    # --- Tier 1: ATS Public JSON APIs ---
-    if ats_type == "greenhouse":
-        result = _extract_greenhouse_tier1(url)
-        if result:
-            return result
-    elif ats_type == "lever":
-        result = _extract_lever_tier1(url)
-        if result:
-            return result
-    elif ats_type == "ashby":
-        result = _extract_ashby_tier1(url)
-        if result:
-            return result
+    try:
+        # --- Tier 1: ATS Public JSON APIs ---
+        if ats_type == "greenhouse":
+            result = _extract_greenhouse_tier1(url)
+            if result:
+                return result
+        elif ats_type == "lever":
+            result = _extract_lever_tier1(url)
+            if result:
+                return result
+        elif ats_type == "ashby":
+            result = _extract_ashby_tier1(url)
+            if result:
+                return result
 
-    # --- Tier 2: Requests + BeautifulSoup ---
-    result = _extract_tier2_soup(url)
-    if result:
-        return result
+        # --- Tier 2: Requests + BeautifulSoup ---
+        try:
+            result = _extract_tier2_soup(url)
+            if result:
+                return result
+        except BotChallengeException as bce:
+            logger.warning("Bot challenge detected on %s during Tier 2. Aborting extraction: %s", url, bce)
+            return "Unable to extract job listing"
+        except Exception as e:
+            logger.debug("Tier 2 extraction failed for %s: %s", url, e)
 
-    # --- Tier 3: Playwright Headless ---
-    result = _extract_tier3_playwright(url)
-    if result:
-        return result
+        # --- Tier 3: Playwright Headless (only if not blocked by bot challenge) ---
+        try:
+            result = _extract_tier3_playwright(url, ats_type=ats_type)
+            if result:
+                return result
+        except BotChallengeException as bce:
+            logger.warning("Bot challenge detected on %s during Tier 3. Aborting extraction: %s", url, bce)
+            return "Unable to extract job listing"
+        except Exception as e:
+            logger.warning("Tier 3 Playwright extraction failed for %s: %s", url, e)
+
+    except Exception as e:
+        logger.warning("Unexpected error during job extraction for %s: %s", url, e)
 
     # --- Guardrail Fallback ---
     logger.warning("All extraction tiers failed for %s. Employing guardrail fallback.", url)
