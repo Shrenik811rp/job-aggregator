@@ -1,0 +1,1845 @@
+Main Idea for project:
+
+The job applier should scrape websites that are less competitive and has less traffic.
+
+Focus on these links or updated versions of these links if they get modified or changed in the future:
+
+1.https://github.com/jobright-ai/2026-Software-Engineer-New-Grad
+2.https://github.com/jobright-ai/2026-Data-Analysis-New-Grad
+3.https://github.com/jobright-ai/2026-Data-Analysis-Internship
+4.https://github.com/jobright-ai/2026-Software-Engineer-Internship
+5.https://github.com/jobright-ai/2026-Product-Management-Internship
+6.https://github.com/jobright-ai/2026-Management-New-Grad
+7.https://github.com/SimplifyJobs/Summer2027-Internships/blob/dev/README.md#-software-engineering-internship-roles
+8.https://github.com/SimplifyJobs/Summer2027-Internships/blob/dev/README.md#-data-science-ai--machine-learning-internship-roles
+9.https://github.com/SimplifyJobs/Summer2027-Internships/blob/dev/README.md#-product-management-internship-roles
+10.https://github.com/SimplifyJobs/Summer2027-Internships
+11.https://github.com/speedyapply/2027-SWE-College-Jobs
+12.https://github.com/zapplyjobs/Internships-2027#-data-science--ai
+13.https://github.com/zapplyjobs/Internships-2027#-software-engineering
+14.https://github.com/zapplyjobs/Internships-2027#-business--operations
+15.https://github.com/speedyapply/2027-AI-College-Jobs
+
+
+And similarly checkout the APIs and  tap into Public ATS JSON APIs, Official RSS feeds, and Open-API Job Boards. These sources have zero bot detection, do not block automated HTTP requests, and return the exact raw job description directly in JSON or XML format.   1. The "Zero-Scrape" ATS Public APIs (Best Quality)Most tech companies host their job listings on ATS platforms (Greenhouse, Lever, Ashby). What few people realize is that these platforms offer public, unauthenticated read-only APIs designed specifically for web engines. You don't even need an HTML parser; a standard requests.get() returns structured JSON with the full job description.   Greenhouse Public Board APIAny company using Greenhouse has a public endpoint. You just need their board name (e.g., stripe, airbnb, cloudflare):   Endpoint: [https://boards-api.greenhouse.io/v1/boards/](https://boards-api.greenhouse.io/v1/boards/){company}/jobs?content=trueWhat you get: Clean JSON array containing title, location, direct absolute_url, and the complete content (full raw HTML job description).   Bot Hurdles: None. No user-agent spoofing, no CAPTCHAs, no cookies required.Lever Public Postings APIAny company using Lever (e.g., [https://jobs.lever.co/](https://jobs.lever.co/){company}) exposes a direct JSON feed:Endpoint: [https://api.lever.co/v0/postings/](https://api.lever.co/v0/postings/){company}?mode=jsonWhat you get: Clean JSON array including text (title), categories (team/location/commitment), descriptionPlain (raw text description without tags), and hostedUrl.   Bot Hurdles: None. Zero anti-bot protection.Ashby Public Job Board APIPopular for startups and mid-market AI companies:Endpoint: [https://api.ashbyhq.com/posting-api/job-board/](https://api.ashbyhq.com/posting-api/job-board/){company}?includeCompensation=trueWhat you get: Clean JSON with job descriptions, salary brackets, and direct jobUrl.   Bot Hurdles: None.2. Job Boards with Official Free JSON APIs & RSS FeedsThese boards openly encourage programmatic access and do not block basic crawlers:RemoteOK API ([https://remoteok.com/api](https://remoteok.com/api)):
+Returns a clean, public JSON payload containing all active postings, company names, tags, salary numbers, and full job descriptions. Completely free, updated in real time, and requires no API key.We Work Remotely RSS Feeds ([https://weworkremotely.com/remote-jobs.rss](https://weworkremotely.com/remote-jobs.rss)):
+Exposes public RSS/XML feeds by category (e.g., /categories/remote-devops-sysadmin-jobs.rss or /categories/remote-back-end-programming-jobs.rss). You can parse new postings in 5 lines of Python using feedparser.Arbeitnow API ([https://www.arbeitnow.com/api/job-board-api](https://www.arbeitnow.com/api/job-board-api)):A developer-friendly European/Remote board offering an unauthenticated public REST API. Returns title, remote status, tags, and complete job description.
+
+
+Look for job intern or apprenticeship or co-ops or trainee any entry level or mid-level roles that expect atleast 4 years or less of experience in the job description not too high seniority roles as listed below or anything along those similar lines.
+
+Try focusing more on internship first and if you find any entry or midlevel positions add them as well.
+
+1. devops 
+2. Site reliablility engineer
+3. cloud engineer
+4. data analyst
+5. price analyst
+6. business analyst
+7. data engineer
+8. product development
+9. product manager 
+10. mlops
+11. dataops
+12. Any role ending with Analyst except Or avoid (Marketing and Sales analyst)
+13. Technical sales 
+14. Software developer intern
+
+
+Next once you find those kind of jobs or roles.
+You go to the link or website of the job site preferably if you can get via API or if accessible via the website get the job description and capture the details.
+
+I need you to tailor the resume based on the ATS the company or job posting is listed in.
+If its greenhouse then tailor the resume based on the job description and greenhouse ATS logic.
+Similarly for workday, ashby or any other ATS replace their placeholder in the master prompt to tailor my base resume latex template.
+
+
+
+The primary ATS platforms used across Fortune 500s, high-growth tech companies, and mid-market organizations fall into clear categories:1. Enterprise & Fortune 500 HeavyweightsThese dominate traditional large corporations, banks, defense contractors, consulting firms, and retail giants. They usually feature multi-page account registration portals, mandatory account logins, and strict compliance layers.Workday Recruiting: The most pervasive enterprise ATS in Fortune 500 companies (e.g., Walmart, Amazon, Target, Accenture, Nvidia, Capital One). Identified by URLs like *.myworkdayjobs.com.iCIMS: Massive market share in enterprise retail, healthcare, logistics, and finance (e.g., FedEx, CVS Health, Microsoft corporate services, Uber operations). Identified by *.icims.com.   Oracle Taleo / Oracle Cloud Recruiting: One of the oldest enterprise ATS suites, widely used in aerospace, defense, banking, and legacy tech (e.g., Lockheed Martin, JPMorgan Chase, Boeing). Identified by *.taleo.net or oraclecloud.com.SAP SuccessFactors: Popular among multinational industrial, automotive, and European enterprise conglomerates (e.g., Siemens, BMW, Whirlpool).Cornerstone OnDemand: Primarily used in enterprise government, education, healthcare, and legacy financial corporations.UKG Pro (formerly UltiPro): Popular for large-scale enterprise workforce management, hospitality, healthcare, and supply chain firms.ADP Workforce Now / ADP Recruiting Management: Widely deployed across mid-to-large non-tech enterprises, manufacturing, and business services.   2. High-Growth Tech, FinTech & Unicorn StandardsModern tech companies, startups, and product firms tend to prefer modern, lightweight ATS platforms with clean, single-page application (SPA) forms and transparent API/RSS access:Greenhouse: The dominant ATS across Silicon Valley tech, finance, and startups (e.g., Stripe, Airbnb, Datadog, Figma, DoorDash, Pinterest). Identified by boards.greenhouse.io or job-boards.greenhouse.io.Lever: The primary competitor to Greenhouse among mid-to-late stage tech companies and scale-ups (e.g., Netflix, Shopify, Eventbrite, Atlassian). Identified by jobs.lever.co.Ashby: The fastest-growing modern ATS in AI labs, seed-to-Series B/C startups, and developer-tool companies (e.g., OpenAI, Ramp, Linear, Retool, Cursor). Identified by jobs.ashbyhq.com.SmartRecruiters: Enterprise-scale modern ATS used by international tech and retail brands (e.g., LinkedIn, Bosch, Skechers, Visa). Identified by jobs.smartrecruiters.com.Workable: Popular with distributed remote companies, digital agencies, and Series A/B tech startups. Identified by apply.workable.com.Pinpoint: Modern cloud ATS increasingly replacing legacy tools in mid-market engineering and software companies.3. Mid-Market, SMB & All-in-One HR SuitesCompanies that run their entire payroll, benefits, and HR operations through one system typically use that platform's built-in ATS:BambooHR: Dominant among small-to-midsize businesses (50–500 employees), non-profits, and regional agencies. Identified by *[.bamboohr.com/careers](https://.bamboohr.com/careers).Rippling: Fast-growing modern unified platform; tech startups use Rippling for HR, IT, and recruiting simultaneously.JazzHR: High-volume recruitment ATS for SMBs, marketing agencies, and local businesses.Breezy HR: Simplified candidate-tracking ATS common in design, digital, and boutique agencies.Zoho Recruit: Used heavily by international small businesses, IT services, and outsourcing firms.4. Specialized & Staffing / Agency ATSRecruitment agencies, executive search firms, and contract staffing companies rely on high-volume database engines:Bullhorn: The undisputed global standard for recruitment agencies and temporary staffing firms (e.g., Robert Half, Randstad, TEKsystems).Jobvite: Mid-to-enterprise recruiting platform with strong sourcing and employee referral automation.Loxo / Recruit CRM: AI-forward ATS and CRM platforms popular with independent headhunters and boutique search firms.ATS URL Footprint Cheat SheetIf you are writing scrapers or tracking URLs, each system reveals itself via distinct domain fingerprints:ATS PlatformCommon URL Pattern / SubdomainApplication ComplexityGreenhouseboards.greenhouse.io/{company} or boards-api.greenhouse.ioSingle-page form; easy to parse.Leverjobs.lever.co/{company} or api.lever.coSingle-page form; clean plain-text endpoints.Ashby[jobs.ashbyhq.com/](https://jobs.ashbyhq.com/){company}Single-page modern DOM; public API available.Workday*[.myworkdayjobs.com/en-US/](https://.myworkdayjobs.com/en-US/){company}Multi-step wizard; requires account login.iCIMScareers-{company}[.icims.com/jobs](https://.icims.com/jobs)Multi-step form; table/iframe-heavy.Taleo{company}.taleo.net/careersectionLegacy table layout; strict session tokens.SmartRecruiters[jobs.smartrecruiters.com/](https://jobs.smartrecruiters.com/){company}Single-page modern layout; public widget APIs.BambooHR{company}[.bamboohr.com/careers/](https://.bamboohr.com/careers/){job_id}Lightweight form; zero bot walls.
+
+
+
+Please find the latex resume template for particular job roles:
+
+devops resume base latex:
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[letterpaper, left=0.4in, right=0.4in, top=0.4in, bottom=0.4in]{geometry}
+\usepackage{mathptmx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+\pagestyle{empty}
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{3pt}{2pt}
+\setlist[itemize]{leftmargin=*, itemsep=0.3pt, topsep=1pt, parsep=0pt, partopsep=0pt}
+
+\begin{document}
+
+\begin{center}
+{\LARGE \textbf{SHRENIK PILLAI}} \\ \vspace{2pt}
+\small US CITIZEN \quad Richardson, TX \\ \vspace{1pt}
+\small (469) 545-8106 \quad \href{mailto:rshrenik811@gmail.com}{rshrenik811@gmail.com} \quad \href{https://linkedin.com/in/shrenik-r}{linkedin.com/in/shrenik-r} \quad \href{https://github.com/Shrenik811rp}{github.com/Shrenik811rp}
+\end{center}
+
+\section*{SUMMARY}
+\noindent\small
+Software engineer with 3 years of experience architecting distributed systems on AWS and Linux environments. Built infrastructure automation pipelines using Python, Ansible, and Jenkins, reducing manual operations and accelerating deployment cycles. Containerized microservices with Docker and managed Kubernetes clusters for production workloads. Experience optimizing system telemetry and monitoring SLIs to reduce incident resolution time. Skilled in translating infrastructure requirements into scalable cloud solutions across compute, storage, and networking domains.
+
+\section*{WORK EXPERIENCE}
+\noindent\small
+\textbf{o9 Solutions, Inc.} \hfill Jan 2023 to Aug 2025 \\
+\textit{DevOps \& Infrastructure Systems Engineer} \hfill \textit{Remote}
+\begin{itemize}
+    \item Built observability dashboards using Python and SQL to monitor distributed system SLIs (latency, error rates), enabling proactive anomaly detection that reduced Mean Time to Resolve (MTTR) by 14\% across production environments.
+    \item Designed and automated CI/CD deployment workflows using Python and Ansible, reducing manual toil by 10\% and cutting Jenkins pipeline lead time for application releases.
+    \item Containerized microservices with Docker and orchestrated deployments across Kubernetes clusters, standardizing configuration management through Git to reduce environment drift by 12\%.
+    \item Architected Linux-based system administration automation for log rotation, resource monitoring, and backup processes across 50+ virtualized nodes, improving system availability.
+    \item Tracked SLA compliance metrics and reported weekly platform reliability status to cross-functional stakeholders, coordinating CI/CD upgrades to maintain project delivery timelines.
+\end{itemize}
+
+\noindent\small
+\textbf{mokSa.ai} \hfill Jan 2022 to Apr 2022 \\
+\textit{Computer Vision \& Infrastructure Engineer} \hfill \textit{Remote}
+\begin{itemize}
+    \item Developed Python data processing pipelines for 50GB+ of daily sensor telemetry, implementing CUDA-accelerated preprocessing with NumPy and OpenCV for real-time computer vision workloads.
+    \item Wrote validation scripts in Python and Shell to ensure system quality compliance for deep learning inference pipelines, improving QA tracking accuracy by 8\%.
+    \item Analyzed GPU and CPU resource utilization in Linux environments to identify performance bottlenecks, optimizing compute efficiency through better job scheduling and resource allocation.
+\end{itemize}
+
+\section*{PROJECT EXPERIENCE}
+\noindent\small
+\textbf{Automated MLOps \& Evaluation Pipeline} \hfill Jan 2026 to May 2026
+\begin{itemize}
+    \item Built telemetry analytics pipelines in Python and Shell to monitor distributed training jobs, tracking real-time KPI anomalies and preventing execution drift by 10\%.
+    \item Constructed CI/CD testing harnesses using Git and Jenkins, standardizing pre-merge validation with containerized test environments in Docker to improve developer throughput by 12\%.
+\end{itemize}
+
+\section*{LEADERSHIP EXPERIENCE}
+\noindent\small
+\textbf{Google Developer Student Club} \hfill Jan 2022 to May 2023 \\
+\textit{Technical Lead} \hfill \textit{Academic Chapter}
+\begin{itemize}
+    \item Led technical workshops on Python, Git, and Linux for a 20+ member engineering team, standardizing development practices and tracking project milestones.
+    \item Troubleshot environment bottlenecks and system conflicts on Linux platforms, ensuring project deliverables remained on schedule.
+\end{itemize}
+
+\section*{EDUCATION}
+\noindent\small
+\textbf{The University of Texas at Dallas}, Richardson, TX \hfill Aug 2025 to May 2027 \\
+\textit{Master of Science in Business Analytics and Artificial Intelligence} \hfill \textit{GPA: 3.50/4.00}
+
+\noindent\small
+\textbf{Amrita Vishwa Vidyapeetham} \hfill Aug 2019 to Oct 2023 \\
+\textit{B.S. in Electronics \& Computer Engineering} \hfill \textit{GPA: 3.34/4.00}
+
+\section*{TECHNICAL SKILLS}
+\noindent\small
+\textbf{Cloud \& Infrastructure:} AWS, Azure, Kubernetes, Docker, Linux Administration, Ansible, Terraform \\
+\textbf{Programming Languages:} Python, C++, Java, Go, SQL, Shell Scripting \\
+\textbf{CI/CD \& Automation:} Jenkins, GitLab, Git, Infrastructure-as-Code \\
+\textbf{ML/DL Frameworks:} NumPy, SciPy, TensorFlow, cuDNN, CUDA, SLURM \\
+\textbf{Observability:} System Telemetry, SLA/SLI Metrics, Incident Response, MTTR Reduction
+
+\section*{CERTIFICATIONS}
+\noindent\small
+\textbf{Microsoft Certified:} Azure Fundamentals (AZ-900) \\
+\textbf{DeepLearning.AI:} Introduction to TensorFlow for AI, ML, and Deep Learning
+
+\end{document}
+
+
+
+resume template for site reliability:
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[letterpaper, left=0.4in, right=0.4in, top=0.4in, bottom=0.4in]{geometry}
+\usepackage{mathptmx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+\pagestyle{empty}
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{4pt}{3pt}
+\setlist[itemize]{leftmargin=*, itemsep=1.5pt, topsep=2pt, parsep=0pt, partopsep=0pt}
+
+\begin{document}
+
+\begin{center}
+{\LARGE \textbf{SHRENIK PILLAI}} \\ \vspace{2pt}
+\small US CITIZEN \quad Richardson, TX \\ \vspace{1pt}
+\small (469) 545-8106 \quad \href{mailto:rshrenik811@gmail.com}{rshrenik811@gmail.com} \quad \href{https://linkedin.com/in/shrenik-r}{linkedin.com/in/shrenik-r} \quad \href{https://github.com/Shrenik811rp}{github.com/Shrenik811rp}
+\end{center}
+
+\section*{SUMMARY}
+\noindent\small
+Systems Infrastructure Engineer with 3 years of experience operating distributed Linux systems, containerized Kubernetes nodes, and cloud environments. Proficient in Python, Shell scripting, Ansible, Terraform, with expertise in automating GitOps continuous deployment workflows via Argo CD, maintaining internal Atlassian tooling, and optimizing telemetry to maximize system availability and reduce toil.
+
+\section*{EDUCATION}
+\noindent\small
+\textbf{The University of Texas at Dallas}, Richardson, TX \hfill Aug 2025 to May 2027 \\
+\textit{Master of Science in Business Analytics and Artificial Intelligence} \hfill \textit{GPA: 3.50/4.00}
+
+\noindent\small
+\textbf{Amrita Vishwa Vidyapeetham} \hfill Aug 2019 to Oct 2023 \\
+\textit{B.S. in Electronics \& Computer Engineering} \hfill \textit{GPA: 3.34/4.00}
+
+\section*{WORK EXPERIENCE}
+\noindent\small
+\textbf{o9 Solutions, Inc.} \hfill Jan 2023 to Aug 2025 \\
+\textit{Software \& Infrastructure Systems Engineer} \hfill \textit{Remote}
+\begin{itemize}
+    \item Deployed microservices and managed containerized workloads across Azure Kubernetes Service (AKS) clusters using Argo CD and continuous GitOps pipeline automation.
+    \item Automated Linux system patching, admin maintenance, and storage failover across 50+ compute nodes using Ansible and Bash scripts, reducing manual operational toil by 10\%.
+    \item Maintained continuous availability and upgrades for internal engineering workflows and Atlassian ecosystem tools, including Jira and Confluence integration hooks.
+    \item Built Python and SQL telemetry processing scripts to measure SLI/SLO metrics, reducing Mean Time to Resolve (MTTR) by 14\% across distributed services.
+    \item Constructed system-level monitoring dashboards and log aggregation architectures in Linux environments to ensure high system uptime and eliminate configuration drift.
+\end{itemize}
+
+\noindent\small
+\textbf{mokSa.ai} \hfill Jan 2022 to Apr 2022 \\
+\textit{Computer Vision \& Infrastructure Engineer} \hfill \textit{Remote}
+\begin{itemize}
+    \item Built automated integration test harnesses in Python and C to validate Linux hardware-in-the-loop sensor telemetry ingestion pipelines processing 50GB+ daily workload volume.
+    \item Configured Linux kernel network parameters and automated pre-deployment verification scripts, resolving TCP/IP bottlenecks to increase tracking accuracy by 8\%.
+    \item Profiled CPU and GPU compute resource consumption across distributed Linux nodes to identify system performance bottlenecks and automate capacity allocation.
+\end{itemize}
+
+\section*{PROJECT EXPERIENCE}
+\noindent\small
+\textbf{Automated Infrastructure \& Continuous Delivery Pipeline} \hfill Jan 2026 to May 2026
+\begin{itemize}
+    \item Engineerd automated CI/CD validation pipelines using Docker, Git, Python, and GitHub Actions to accelerate build iteration speeds and ensure zero-downtime releases.
+    \item Built real-time Linux telemetry dashboards in Python to trace container resource utilization and cluster networking metrics, preventing runtime service degradation by 10\%.
+\end{itemize}
+
+\section*{LEADERSHIP EXPERIENCE}
+\noindent\small
+\textbf{Google Developer Student Club} \hfill Jan 2022 to May 2023 \\
+\textit{Technical Lead} \hfill \textit{Academic Chapter}
+\begin{itemize}
+    \item Guided a 20+ member engineering team on Linux system administration standards, network security fundamentals, and Python scripting workflows.
+    \item Automated environment provisioning scripts across project workstations to standardize local development setups and maintain sprint milestones.
+\end{itemize}
+
+\section*{TECHNICAL SKILLS}
+\noindent\small
+\textbf{Cloud \& Orchestration:} Azure (AKS), Kubernetes, Docker, Argo CD, GitOps, On-Premise Virtualization \\
+\textbf{Infrastructure-as-Code \& Linux:} Linux Administration (Ubuntu/Debian/RHEL), Bash Scripting, Python, Ansible, Terraform \\
+\textbf{CI/CD \& Productivity Tools:} GitHub Actions, Jenkins, Git, Atlassian Suite (Jira, Confluence), Automated Release Systems \\
+\textbf{Observability \& Networking:} TCP/IP Networking, System Security Fundamentals, Telemetry Pipelines, SLI/SLO Tracking
+
+\section*{CERTIFICATIONS}
+\noindent\small
+\textbf{Microsoft Certified:} Azure Fundamentals (AZ-900) \\
+\textbf{DeepLearning.AI:} Introduction to TensorFlow for AI, ML, and Deep Learning
+
+\end{document}
+
+
+resume latex template for data engineering:
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[letterpaper, left=0.4in, right=0.4in, top=0.35in, bottom=0.35in]{geometry}
+\usepackage{mathptmx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+\pagestyle{empty}
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{3pt}{2pt}
+\setlist[itemize]{leftmargin=*, itemsep=1.5pt, topsep=2pt, parsep=0pt, partopsep=0pt}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{SHRENIK PILLAI}} \\ \vspace{2pt}
+    \small Richardson, TX $|$ (469) 545-8106 $|$ \href{mailto:rshrenik811@gmail.com}{rshrenik811@gmail.com} $|$ \href{https://linkedin.com/in/shrenik-r}{linkedin.com/in/shrenik-r} $|$ \href{https://github.com/Shrenik811rp}{github.com/Shrenik811rp} \\ \vspace{1pt}
+    \small \textbf{US Citizen} 
+\end{center}
+
+\section*{PROFESSIONAL SUMMARY}
+\noindent\small
+Data Engineer Master's candidate with expertise in designing high-throughput ETL/ELT pipelines, distributed data processing, and cloud database architecture. Proficient in SQL, Python, Databricks, AWS, and REST API frameworks. Track record of optimizing query latency, enforcing data quality contracts, and scaling data platforms to support cross-functional business analytics and operational decision-making.
+
+\section*{EDUCATION}
+\noindent\small
+\textbf{The University of Texas at Dallas}, Richardson, TX \hfill August 2025 -- May 2027 \\
+\textit{Master of Science in Business Analytics and Artificial Intelligence} \hfill \textit{GPA: 3.50/4.00}
+
+\noindent\small
+\textbf{Amrita Vishwa Vidyapeetham} \hfill August 2019 -- October 2023 \\
+\textit{Bachelor of Science in Electronics \& Computer Engineering} \hfill \textit{GPA: 3.34/4.00}
+
+\section*{WORK EXPERIENCE}
+
+\noindent\small
+\textbf{o9 Solutions, Inc.} \hfill January 2023 -- August 2025 \\
+\textit{Data Engineer / Data Analyst} \hfill \textit{Remote}
+\begin{itemize}
+    \item Engineered batch and near-real-time ETL pipelines in Python and SQL to ingest multi-source operational datasets into cloud data warehouses, boosting pipeline throughput by 15\%.
+    \item Implemented automated data quality validation routines and schema verification checks in Databricks and PySpark, reducing inbound data ingestion errors by 18\%.
+    \item Refactored complex SQL queries and indexed relational databases, cutting query execution latency and improving downstream analytics performance for 5 business teams.
+    \item Developed custom REST API data ingestion routines and automated telemetry scripts, eliminating manual pipeline monitoring toil and ensuring continuous system availability.
+    \item Collaborated with business stakeholders to design dimensional data models, enabling unified KPI reporting and resource planning.
+\end{itemize}
+
+\noindent\small
+\textbf{mokSa.ai} \hfill January 2022 -- April 2022 \\
+\textit{Data Operations Analyst} \hfill \textit{Remote}
+\begin{itemize}
+    \item Consolidated 50GB of multi-source operational logs using SQL and Python into staging environments, building robust staging tables for downstream analytics.
+    \item Optimized SQL queries and optimized cloud resource allocation in AWS, reducing compute infrastructure expenses by 8\% without impacting pipeline runtime SLAs.
+    \item Tested and debugged REST API integrations using Postman, verifying payload integrity and payload response schemas across external data sources.
+\end{itemize}
+
+\section*{DATA ENGINEERING PROJECTS}
+
+\noindent\small
+\textbf{Cloud Data Warehouse Pipeline \& API Integration Engine} \hfill August 2025 -- November 2025
+\begin{itemize}
+    \item Architected end-to-end ELT data pipelines in Python and AWS S3/Redshift to process batch data loads, maintaining 99.8\% pipeline SLA adherence under peak traffic.
+    \item Constructed REST API endpoints using Python Flask and validated requests using Postman test collections, standardizing JSON payload extraction into relational schemas.
+    \item Automated pipeline execution and error logging routines, maintaining automated data quality checks across transformation steps.
+\end{itemize}
+
+\noindent\small
+\textbf{Databricks Distributed ETL Optimization \& Benchmarking} \hfill September 2025 -- December 2025
+\begin{itemize}
+    \item Benchmarked PySpark job performance on Databricks clusters, tuning partition strategy and caching mechanisms to reduce execution latency by 6\%.
+    \item Configured automated unit tests and integration tests in Python to debug data transformations and ensure schema consistency across raw, bronze, and silver data layers.
+\end{itemize}
+
+\section*{LEADERSHIP EXPERIENCE}
+
+\noindent\small
+\textbf{INFORMS UTD Chapter} \hfill The University of Texas at Dallas \\
+\textit{Operations Officer} \hfill January 2026 -- Present
+\begin{itemize}
+    \item Automated Python scripts to consume REST API webhooks for survey data, accelerating processing and increasing participation by 20\%.
+\end{itemize}
+
+\noindent\small
+\textbf{Google Developer Student Club} \hfill Academic Chapter \\
+\textit{Technical Lead} \hfill January 2022 -- May 2023
+\begin{itemize}
+    \item Led workshops on SQL query tuning, database normalization, schema design, and REST API testing using Postman for 20+ developers.
+\end{itemize}
+
+\section*{TECHNICAL SKILLS}
+\noindent\small
+\textbf{Languages \& Databases:} SQL (PostgreSQL, MySQL), Python (Pandas, NumPy, PySpark), R, JavaScript \\
+\textbf{Data Engineering \& Cloud:} Databricks, AWS (S3, Redshift, EC2), ETL/ELT Pipelines, Data Modeling (Kimball), Schema Evolution \\
+\textbf{Tools \& Frameworks:} Postman, REST API Frameworks, Git, GitHub Actions, Docker, Table/Dashboard Analytics
+
+\end{document}
+
+
+latex resume template for data ops:
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[letterpaper, left=0.4in, right=0.4in, top=0.35in, bottom=0.35in]{geometry}
+\usepackage{mathptmx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+\pagestyle{empty}
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{4pt}{3pt}
+\setlist[itemize]{leftmargin=*, itemsep=1.5pt, topsep=2pt, parsep=0pt, partopsep=0pt}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Shrenik Pillai}} \\ \vspace{2pt}
+    \textbf{US Citizen}  \quad \small Richardson, TX  \quad (469) 545-8106 \quad \href{mailto:rshrenik811@gmail.com}{rshrenik811@gmail.com}  \quad \href{https://linkedin.com/in/shrenik-r}{linkedin.com/in/shrenik-r}  \quad \href{https://github.com/Shrenik811rp}{github.com/Shrenik811rp} \\ \vspace{1pt}
+\end{center}
+
+\section*{PROFESSIONAL SUMMARY}
+\noindent\small
+Data Analytics Engineer and Master's candidate in Business Analytics with 3 years of experience building data pipelines, validating complex SQL queries, and enforcing data quality across modern data warehouse environments. Highly detail-oriented in identifying missing values and anomalies, with a background in translating operational business rules into technical documentation. Eager to apply cross-functional reporting and risk analytics experience to actuarial data workflows.
+
+\section*{EDUCATION}
+\noindent\small
+\textbf{The University of Texas at Dallas}, Richardson, TX \hfill August 2025 -- May 2027 \\
+\textit{Master of Science in Business Analytics and Artificial Intelligence} \hfill \textit{GPA: 3.50/4.00}
+
+\vspace{3pt}
+\noindent\small
+\textbf{Amrita Vishwa Vidyapeetham} \hfill August 2019 -- October 2023 \\
+\textit{Bachelor of Science in Electronics \& Computer Engineering} \hfill \textit{GPA: 3.34/4.00}
+
+\section*{PROFESSIONAL EXPERIENCE}
+
+\noindent\small
+\textbf{o9 Solutions, Inc.} \hfill January 2023 -- July 2025 \\
+\textit{Data Engineer \& Operations Analyst} \hfill \textit{Remote}
+\begin{itemize}
+    \item Rewrote, updated, and tested existing SQL queries to support evolving data sources, cutting query execution latency to support self-service analytics and business decisions.
+    \item Performed strict data quality checks using SQL and PySpark to identify missing values, duplicate records, and unexpected results, reducing inbound ingestion errors by 18\%.
+    \item Documented data sources, business rules, and query logic in clear markdown repositories to ensure recurring processes were highly organized and easily maintainable.
+    \item Engineered batch and near-real-time ETL pipelines in Python to gather and prepare multi-source financial and risk analytics datasets across modern data warehouse environments.
+    \item Partnered with cross-functional data scientists, planners, and business leaders on ad hoc process improvements, comparing results from updated queries to prior outputs to track key measures.
+\end{itemize}
+
+\vspace{3pt}
+\noindent\small
+\textbf{mokSa.ai} \hfill January 2022 -- April 2022 \\
+\textit{Data Operations Analyst} \hfill \textit{Remote}
+\begin{itemize}
+    \item Consolidated 50GB of multi-source operational logs using SQL, Python, and R into staging environments, constructing relational tables for historical trend analysis.
+    \item Maintained strict attention to detail when evaluating JSON payload schema integrity, comparing output differences in counts and measures across updated external data feeds.
+    \item Managed collaborative development workflows using Git version control and optimized cloud resource allocation in AWS to reduce compute costs by 8\%.
+\end{itemize}
+
+\section*{PROJECT EXPERIENCE}
+
+\noindent\small
+\textbf{Cloud Data Warehouse Pipeline Engine} \hfill August 2025 -- November 2025
+\begin{itemize}
+    \item Architected end-to-end ELT pipelines in Python and AWS Redshift to process high-volume logs, applying data quality concepts to validate inputs and achieving 99.8\% pipeline SLA adherence.
+    \item Built interactive Streamlit and Tableau dashboards connected to Redshift endpoints, providing clear visibility into operational anomalies and recurring data changes over time.
+\end{itemize}
+
+\vspace{3pt}
+\noindent\small
+\textbf{Distributed ETL Optimization \& Benchmarking} \hfill September 2025 -- December 2025
+\begin{itemize}
+    \item Benchmarked PySpark processing jobs on Databricks clusters, tuning partition mechanisms to cut job execution latency by 6\% during complex data preparation tasks.
+    \item Configured automated unit and integration tests in Python to ensure data transformation accuracy across raw, bronze, and silver data quality layers.
+\end{itemize}
+
+\section*{LEADERSHIP EXPERIENCE}
+
+\noindent\small
+\textbf{INFORMS UTD Chapter} \hfill The University of Texas at Dallas \\
+\textit{Operations Officer} \hfill January 2026 -- Present
+\begin{itemize}
+    \item Automated Python scripts to ingest and process survey datasets, accelerating reporting and increasing member event participation by 20\%.
+\end{itemize}
+\section*{TECHNICAL SKILLS}
+\noindent\small
+\textbf{Languages \& Analysis Tools:} SQL (PostgreSQL, MySQL), Python (Pandas, NumPy, PySpark), R, JavaScript \\
+\textbf{Data Quality \& Operations:} Query Testing/Validation, Data Source Documentation, Business Rule Integration, Anomaly Detection \\
+\textbf{Cloud \& Modern Data Warehouses:} Databricks, AWS (S3, Redshift, EC2), ETL/ELT Pipelines, Relational Databases \\
+\textbf{Developer Tooling \& Visualization:} Git, Tableau, Power BI, Streamlit, Docker, REST APIs
+
+\end{document}
+
+
+resume latex template for software engineer:
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[letterpaper, left=0.4in, right=0.4in, top=0.4in, bottom=0.4in]{geometry}
+\usepackage{mathptmx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+\pagestyle{empty}
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{4pt}{3pt}
+\setlist[itemize]{leftmargin=*, itemsep=1.5pt, topsep=2pt, parsep=0pt, partopsep=0pt}
+
+\begin{document}
+
+\begin{center}
+{\LARGE \textbf{SHRENIK PILLAI}} \\ \vspace{2pt}
+\small US CITIZEN \quad Richardson, TX \\ \vspace{1pt}
+\small (469) 545-8106 \quad \href{mailto:rshrenik811@gmail.com}{rshrenik811@gmail.com} \quad \href{https://linkedin.com/in/shrenik-r}{linkedin.com/in/shrenik-r} \quad \href{https://github.com/Shrenik811rp}{github.com/Shrenik811rp}
+\end{center}
+
+\section*{SUMMARY}
+\noindent\small
+Incoming Software Engineer with 3 years of experience specializing in \textbf{Distributed Systems}, \textbf{RESTful APIs}, and automated \textbf{Data Pipelines}. Proficient in \textbf{C++}, \textbf{Python}, and web technologies, with a strong background in developer enablement, technical troubleshooting, and microservice infrastructure at scale.
+
+\section*{EDUCATION}
+\noindent\small
+\textbf{The University of Texas at Dallas}, Richardson, TX \hfill Expected Graduation: 05/27 \\
+\textit{Master of Science in Business Analytics and Artificial Intelligence} \hfill \textit{GPA: 3.50/4.00}
+
+\noindent\small
+\textbf{Amrita Vishwa Vidyapeetham} \hfill Graduation: 10/23 \\
+\textit{B.S. in Electronics \& Computer Engineering} \hfill \textit{GPA: 3.34/4.00}
+
+
+\section*{WORK EXPERIENCE}
+\noindent\small
+\textbf{o9 Solutions, Inc.} \hfill Jan 2023 to Aug 2025 \\
+\textit{Software \& Infrastructure Systems Engineer} \hfill \textit{Remote}
+\begin{itemize}
+    \item Accelerated partner onboarding speed by \textbf{10\%} across enterprise platforms by designing \textbf{RESTful API} integrations and SDK middleware using C\#, JavaScript, and JSON schemas.
+    \item Reduced Mean Time to Resolve (MTTR) by \textbf{14\%} for complex integration blockers by architecting \textbf{Python and SQL telemetry pipelines} and web dashboards to flag latency anomalies in real time.
+    \item Resolved technical onboarding friction by \textbf{12\%} by containerizing integration endpoints using \textbf{Docker} and orchestrating production deployments on \textbf{Kubernetes} clusters.
+    \item Increased infrastructure reliability across \textbf{50+ virtualized Linux nodes} by building automated administrative tooling for system logging, storage failover, and developer support scripts.
+    \item Maintained continuous availability and strict SLA targets by managing multi-tier \textbf{CI/CD pipeline updates} in collaboration with cross-functional engineering and partner teams.
+\end{itemize}
+
+\noindent\small
+\textbf{mokSa.ai} \hfill Jan 2022 to Apr 2022 \\
+\textit{Computer Vision \& Infrastructure Engineer} \hfill \textit{Remote}
+\begin{itemize}
+    \item Processed \textbf{50GB+ daily sensor telemetry} by engineering parallel \textbf{data pipelines} in Python and C optimized with CUDA acceleration for downstream analytic dashboards.
+    \item Improved object tracking accuracy by \textbf{8\%} by developing technical troubleshooting harnesses and Python diagnostic scripts to resolve system bottlenecks in \textbf{Linux environments}.
+    \item Optimized compute hardware utilization across distributed nodes by profiling CPU and GPU resource allocation to resolve integration bottlenecks in real-time execution flows.
+\end{itemize}
+
+\section*{PROJECTS}
+\noindent\small
+\textbf{Automated Infrastructure \& Telemetry Pipeline} \hfill Jan 2026 to May 2026
+\begin{itemize}
+    \item Decreased runtime execution failures by \textbf{10\%} by architecting real-time telemetry dashboards and \textbf{Webhooks} in Python and JavaScript to monitor distributed integration endpoints.
+    \item Accelerated developer throughput by \textbf{12\%} by constructing automated testing harnesses and SDK verification workflows using Git, Jenkins, and isolated \textbf{Docker containers}.
+\end{itemize}
+
+\section*{LEADERSHIP EXPERIENCE}
+\noindent\small
+\textbf{Google Developer Student Club} \hfill Jan 2022 to May 2023 \\
+\textit{Technical Lead} \hfill \textit{Academic Chapter}
+\begin{itemize}
+    \item Led technical workshops for \textbf{20+ student engineers} on developer enablement, \textbf{C++}, Python software design, REST APIs, and Linux administration.
+    \item Resolved technical blockers and build errors by creating interactive troubleshooting documentation and debugging environment setup scripts.
+\end{itemize}
+
+\section*{TECHNICAL SKILLS}
+\noindent\small
+\textbf{Programming Languages:} C++, Python, C, C\#, Java, JavaScript, Go, SQL, Shell Scripting \\
+\textbf{Web \& Integrations:} RESTful APIs, JSON, SDKs, Webhooks, Microservices, Technical Troubleshooting, Webhooks \\
+\textbf{Cloud \& Infrastructure:} Kubernetes, Docker, AWS, Azure, Ansible, Terraform, Linux Systems, Git, CI/CD Pipelines \\
+\textbf{Data \& Observability:} Data Pipelines, Automated Dashboards, System Telemetry, SLI/SLO Metrics, High-Throughput Processing
+
+\section*{CERTIFICATIONS}
+\noindent\small
+\textbf{Microsoft Certified:} Azure Fundamentals (AZ-900) \\
+\textbf{DeepLearning.AI:} Introduction to TensorFlow for AI, ML, and Deep Learning
+
+\end{document}
+
+resume latex template for mlops:
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.45in]{geometry}
+\usepackage{mathptmx} % Times New Roman font
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref} % Removes blue boxes, keeps links active
+\usepackage{titlesec}
+
+% Disable page numbers
+\pagestyle{empty}
+
+% Formatting section headers with balanced spacing for breathability
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{6pt}{3pt}
+
+% Customizing lists to look open while respecting the 1-page ceiling
+\setlist[itemize]{leftmargin=*, itemsep=1pt, topsep=1.5pt, parsep=0pt, partopsep=0pt}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+    {\huge \textbf{Shrenik Pillai}} \\ \vspace{3pt}
+    Us Citizen \textbar{} Richardson, TX \\ \vspace{2pt}
+    (469) 545-8106 \textbar{} \href{mailto:rshrenik811@gmail.com}{rshrenik811@gmail.com} \textbar{} \href{https://linkedin.com/in/shrenik-r}{linkedin.com/in/shrenik-r} \textbar{} \href{https://github.com/Shrenik811rp}{github.com/Shrenik811rp}
+\end{center}
+
+% EDUCATION
+\section*{Education}
+\noindent
+\textbf{The University of Texas at Dallas}, Richardson, TX \hfill Aug 2025 -- Jun 2027 \\
+\textit{Master of Science in Business Analytics and Artificial Intelligence} \hfill \textit{GPA: 3.50/4.00}
+
+\vspace{4pt}
+\noindent
+\textbf{Amrita Vishwa Vidyapeetham} \hfill Aug 2019 -- Oct 2023 \\
+\textit{B.S. in Electronics and Computer Engineering (Focus in Cloud Architecture \& Systems)} \hfill \textit{GPA: 3.34/4.00}
+
+% TECHNICAL SKILLS
+\section*{Technical Skills}
+\begin{itemize}
+    \item \textbf{MLOps \& Tooling:} MLflow, Airflow, Spark, Automated Model Training, Model Registries, Feature Stores, Data Drift
+    \item \textbf{Cloud \& Infrastructure:} GCP, Google Cloud, AWS, Azure, Infrastructure-as-Code, Terraform, Cloud Technologies
+    \item \textbf{Containerization \& Orchestration:} Kubernetes, Docker, Containerization, Pods, Services, Deployments
+    \item \textbf{Automation \& DevOps:} Configuration Management, Automation Solutions, Jenkins, GitLab CI, Bash, DevOps, Ansible
+    \item \textbf{Languages \& Analytics:} Python, Go (Familiar), SQL, R (Programming Language), Data Analytics, AI, Data Structures
+    \item \textbf{Observability \& Databases:} ELK Stack (Elasticsearch, Logstash, Kibana), Prometheus, Grafana, CloudWatch, NoSQL
+\end{itemize}
+
+% WORK EXPERIENCE
+\section*{Work Experience}
+
+\noindent
+\textbf{DevOps Engineer (ML Platform Infrastructure)} \hfill Jan 2023 -- Aug 2025 \\
+\textit{o9 Solutions, Inc.} \hfill \textit{Remote}
+\begin{itemize}
+    \item \textbf{Infrastructure-as-code configuration} executed across AWS, Azure, and GCP environments using Terraform modules to deploy scalable, highly-available host systems for enterprise SaaS solutions.
+    \item \textbf{CI/CD pipeline optimization} engineered via Jenkins and GitLab CI using Bash scripts, cutting continuous integration lead times from \textbf{5+ days to 3 days} for cross-functional deployment runs.
+    \item \textbf{Kubernetes cluster orchestration} managed to ensure continuous microservice delivery, maintaining underlying hosting cluster stability and runtime baselines above \textbf{98\% to 99\%}.
+    \item \textbf{ELK stack observability frameworks} deployed across testing and production topologies, tracking platform system health metrics to maintain a strict \textbf{30-minute} average incident response window.
+    \item \textbf{Technical environment support} provided for \textbf{70+} engineers and data platform members during complex, low-latency system delivery configurations and weekly release cycles.
+\end{itemize}
+\vspace{4pt}
+
+\noindent
+\textbf{Computer Vision \& ML Infrastructure Engineer} \hfill Feb 2022 -- Apr 2022 \\
+\textit{mokSa.ai} \hfill \textit{Remote}
+\begin{itemize}
+    \item \textbf{Productionalized real-time inference models} in Python using TensorFlow, processing over \textbf{50GB} of daily pipeline figures for live security video analysis.
+    \item \textbf{Automated model tracking validation} structured to systematically check runtime evaluations, raising core analytic accuracy performance metrics from \textbf{80\% to 84\%} across live video feeds.
+    \item \textbf{Statistical data modeling} executed to track real-time behavioral insights and consumer indicators, providing automated tracking scripts that contributed to a \textbf{15\%} drop in facility theft occurrences.
+\end{itemize}
+
+% PROJECT EXPERIENCE
+\section*{Project Experience}
+
+\noindent
+\textbf{Automated MLflow Retraining \& Deployment Pipeline} \hfill \textit{MLOps Toolchain Project}
+\begin{itemize}
+    \item \textbf{Automated model training workflows} built using Airflow and MLflow to manage execution history, tracking data drift and packaging versions via secure Docker setups.
+    \item \textbf{Continuous validation gates} deployed inside GitLab pipelines to inspect software testing conditions, shrinking active model configuration drift instances by \textbf{8\%}.
+\end{itemize}
+\vspace{4pt}
+
+\noindent
+\textbf{Low-Latency Feature Ingestion \& Microservice Store} \hfill \textit{Infrastructure \& AI Project}
+\begin{itemize}
+    \item \textbf{Data engineering pipelines} designed utilizing Python scripts to handle structural data analytics queries and serve calculated vectors into NoSQL databases.
+    \item \textbf{Observability stack integrations} implemented via Prometheus and Grafana, empowering platform teams to monitor live system metrics with a \textbf{100\%} validation accuracy rate.
+\end{itemize}
+
+\end{document}
+
+
+resume latex template for data analyst:
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[letterpaper, left=0.4in, right=0.4in, top=0.35in, bottom=0.35in]{geometry}
+\usepackage{mathptmx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+\pagestyle{empty}
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{4pt}{3pt}
+\setlist[itemize]{leftmargin=*, itemsep=1.5pt, topsep=2pt, parsep=0pt, partopsep=0pt}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{SHRENIK PILLAI}} \\ \vspace{2pt}
+    \textbf{US Citizen} $|$ \small Richardson, TX $|$ (469) 545-8106 $|$ \href{mailto:rshrenik811@gmail.com}{rshrenik811@gmail.com} $|$ \href{https://linkedin.com/in/shrenik-r}{linkedin.com/in/shrenik-r} $|$ \href{https://github.com/Shrenik811rp}{github.com/Shrenik811rp} \\ \vspace{1pt}
+\end{center}
+
+\section*{PROFESSIONAL SUMMARY}
+\noindent\small
+Analytics Engineer and Master's candidate in Business Analytics with over 2 years of experience engineering data pipelines, relational data models, and operational dashboards. Proven track record of translating complex manufacturing and supply chain operational requirements into scalable data products, optimizing pipeline throughput, and enabling real-time decision-making for leadership.
+
+\section*{EDUCATION}
+\noindent\small
+\textbf{The University of Texas at Dallas}, Richardson, TX \hfill August 2025 -- May 2027 \\
+\textit{Master of Science in Business Analytics and Artificial Intelligence} \hfill \textit{GPA: 3.50/4.00}
+
+\vspace{3pt}
+\noindent\small
+\textbf{Amrita Vishwa Vidyapeetham} \hfill August 2019 -- October 2023 \\
+\textit{Bachelor of Science in Electronics \& Computer Engineering} \hfill \textit{GPA: 3.34/4.00}
+
+\section*{PROFESSIONAL EXPERIENCE}
+
+\noindent\small
+\textbf{o9 Solutions, Inc.} \hfill January 2023 -- July 2025 \\
+\textit{Data Engineer / Data Analyst} \hfill \textit{Remote}
+\begin{itemize}
+    \item Engineered batch and near-real-time ETL data pipelines using SQL and Python to ingest multi-source supply chain and ERP datasets, increasing throughput by 15\%.
+    \item Modeled structured dimensional schemas in Databricks to integrate purchasing, inventory, and production data, enabling real-time operational dashboarding across 5 business teams.
+    \item Implemented automated data quality validation and schema verification routines in PySpark, reducing inbound ingestion errors from external MES and planning systems by 18\%.
+    \item Refactored complex SQL query structures and optimized database indexing, cutting query execution latency to support self-service analytics and root-cause yield analysis.
+    \item Collaborated with cross-functional planners and business leaders to define data contracts, standardizing key performance indicators for inventory health and lead time tracking.
+\end{itemize}
+
+\vspace{3pt}
+\noindent\small
+\textbf{mokSa.ai} \hfill January 2022 -- April 2022 \\
+\textit{Data Operations Analyst} \hfill \textit{Remote}
+\begin{itemize}
+    \item Consolidated 50GB of multi-source operational logs using SQL and Python into staging environments, constructing staging tables for inventory reconciliation and trend analysis.
+    \item Optimized SQL execution paths and cloud resource allocation in AWS, cutting infrastructure compute costs by 8\% while maintaining strict pipeline runtime SLAs.
+    \item Tested REST API integrations using Postman, ensuring JSON payload schema integrity across external data feeds and operational systems.
+\end{itemize}
+
+\section*{DATA ENGINEERING \& ANALYTICS PROJECTS}
+
+\noindent\small
+\textbf{Supply Chain \& Cloud Data Warehouse Pipeline Engine} \hfill August 2025 -- November 2025
+\begin{itemize}
+    \item Architected end-to-end ELT pipelines in Python and AWS Redshift to process manufacturing throughput logs, achieving 99.8\% pipeline SLA adherence.
+    \item Built interactive Streamlit and Tableau dashboards connected to Redshift endpoints, providing real-time visibility into inventory positions, lead times, and capacity utilization.
+    \item Constructed Python REST API endpoints to capture operational webhooks and standardized JSON payloads into relational data models.
+\end{itemize}
+
+\vspace{3pt}
+\noindent\small
+\textbf{Databricks Distributed ETL Optimization \& Benchmarking} \hfill September 2025 -- December 2025
+\begin{itemize}
+    \item Benchmarked PySpark processing jobs on Databricks clusters, tuning partition and caching mechanisms to cut job execution by 6\%.
+    \item Configured automated unit and integration tests in Python to ensure data transformation across raw, bronze, and silver data layers.
+\end{itemize}
+
+\section*{LEADERSHIP EXPERIENCE}
+
+\noindent\small
+\textbf{INFORMS UTD Chapter} \hfill January 2026 -- Present \\
+\textit{Operations Officer} \hfill \textit{Richardson, TX}
+\begin{itemize}
+    \item Automated Python integration scripts to ingest REST API survey data, accelerating processing and member participation by 20\%.
+\end{itemize}
+
+\vspace{3pt}
+\noindent\small
+\textbf{Google Developer Student Club} \hfill January 2022 -- May 2023 \\
+\textit{Technical Lead} \hfill \textit{Academic Chapter}
+\begin{itemize}
+    \item Led workshops on SQL query tuning, relational database normalization, schema design, and REST API testing for 20+ developers.
+\end{itemize}
+
+\section*{TECHNICAL SKILLS}
+\noindent\small
+\textbf{Languages \& Frameworks:} SQL (PostgreSQL, MySQL), Python (Pandas, NumPy, PySpark), R, JavaScript, REST APIs \\
+\textbf{Visualization \& BI:} Tableau, Power BI, Streamlit, Dashboard Design, Custom KPI Trackers, PLM Data Workflows \\
+\textbf{Data Engineering \& Cloud:} Databricks, AWS (S3, Redshift, EC2), ETL/ELT Pipelines, Data Modeling (Kimball), Schema Evolution \\
+\textbf{Manufacturing \& Supply Chain Systems:} ERP/MRP Data Integration, MES Logs, Inventory Reconciliation, Git, Docker
+
+\end{document}
+
+
+
+Resume template for business analyst:
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[letterpaper, left=0.4in, right=0.4in, top=0.35in, bottom=0.35in]{geometry}
+\usepackage{mathptmx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+\pagestyle{empty}
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{3pt}{2pt}
+\setlist[itemize]{leftmargin=*, itemsep=1.5pt, topsep=2pt, parsep=0pt, partopsep=0pt}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{SHRENIK PILLAI}} \\ \vspace{2pt}
+    \small Richardson, TX $|$ (469) 545-8106 $|$ rshrenik811@gmail.com $|$ linkedin.com/in/shrenik-r $|$ github.com/Shrenik811rp \\ \vspace{1pt}
+    \small \textbf{US Citizen} 
+\end{center}
+
+\section*{PROFESSIONAL SUMMARY}
+\noindent\small
+Business Analytics Master's candidate with experience bridging technical data teams and client-facing stakeholders. Proficient in SQL, Python, Power BI, Excel, and cloud architectures (AWS, Azure). Proven track record in gathering requirements, validating ML/analytics feature releases, conducting data quality audits, and managing product lifecycle to align analytics solutions with business objectives.
+
+\section*{EDUCATION}
+\noindent\small
+\textbf{The University of Texas at Dallas}, Richardson, TX \hfill August 2025 -- May 2027 \\
+\textit{Master of Science in Business Analytics and Artificial Intelligence} \hfill \textit{GPA: 3.50/4.00}
+
+\noindent\small
+\textbf{Amrita Vishwa Vidyapeetham} \hfill August 2019 -- October 2023 \\
+\textit{Bachelor of Science in Electronics \& Computer Engineering} \hfill \textit{GPA: 3.34/4.00}
+
+\section*{WORK EXPERIENCE}
+
+\noindent\small
+\textbf{o9 Solutions, Inc.} \hfill January 2023 -- July 2025 \\
+\textit{Business Analyst / Data Analyst} \hfill \textit{Remote}
+\begin{itemize}
+    \item Gathered client business requirements and facilitated communication between internal data science teams and external stakeholders, accelerating platform feature intake speed by 15\%.
+    \item Implemented data quality validation routines and audit checks in Databricks and SQL, investigating client data discrepancies and reducing inbound ingestion errors by 18\%.
+    \item Collaborated across functions to support client onboarding and technical implementation, refactoring complex SQL queries to cut report delivery latency for cross-functional teams.
+    \item Supported product lifecycle testing, bug identification, and user feedback documentation for analytical platforms, improving platform stability and accelerating release cycles by 25\%.
+    \item Built Power BI dashboards and automated reporting workflows with data scientists to translate complex risk and operational data into clear business insights for leadership.
+\end{itemize}
+
+\noindent\small
+\textbf{mokSa.ai} \hfill January 2022 -- April 2022 \\
+\textit{Data Operations Analyst} \hfill \textit{Remote}
+\begin{itemize}
+    \item Standardized multi-source log datasets into structured staging environments using SQL and Python, ensuring complete data accuracy for client-facing analytics solutions.
+    \item Tested and validated Python-based analytical tools and REST API payloads, capturing 15+ edge-case schema issues to prevent client implementation disruptions.
+    \item Supported cloud resource allocation audits, optimizing compute infrastructure costs by 8\% while maintaining strict performance SLAs.
+\end{itemize}
+
+\section*{ANALYTICAL \& PRODUCT PROJECTS}
+
+\noindent\small
+\textbf{Integrated Analytics Platform Testing \& Requirement Validation} \hfill August 2025 -- November 2025
+\begin{itemize}
+    \item Conducted user acceptance testing (UAT) and functional validation on analytical applications, documenting user requirements and software issues to enhance product usability.
+    \item Built automated data ingestion routines in R and Python to format client JSON payloads into relational database schemas with 99.8\% reliability.
+    \item Facilitated cross-functional feedback cycles, conducting data audits across transformation steps to maintain strict schema accuracy prior to client release.
+\end{itemize}
+
+\noindent\small
+\textbf{AWS/Azure Cloud Analytics \& Feature Validation Engine} \hfill September 2025 -- December 2025
+\begin{itemize}
+    \item Tested feature implementations for analytics models in cloud environments, tuning execution performance to reduce latency by 6\%.
+    \item Configured unit test suites and documentation in Python to validate raw-to-refined data pipeline outputs, ensuring complete data accuracy prior to stakeholder reporting.
+\end{itemize}
+
+\section*{LEADERSHIP EXPERIENCE}
+
+\noindent\small
+\textbf{INFORMS UTD Chapter} \hfill The University of Texas at Dallas \\
+\textit{Operations Officer} \hfill January 2026 -- Present
+\begin{itemize}
+    \item Processed member feedback and survey datasets using Python, streamlining event logistics and boosting member engagement by 20\%.
+\end{itemize}
+
+\noindent\small
+\textbf{Google Developer Student Club} \hfill Academic Chapter \\
+\textit{Technical Lead} \hfill January 2022 -- May 2023
+\begin{itemize}
+    \item Led interactive technical sessions on SQL query, Power BI reporting, and Python data analysis techniques for 20+ student developers.
+\end{itemize}
+
+\section*{TECHNICAL SKILLS}
+\noindent\small
+\textbf{Analytics \& Languages:} SQL (PostgreSQL, MySQL), Python (Pandas, NumPy, PySpark), R, Excel (Advanced), PowerPoint \\
+\textbf{Tools \& Cloud:} Power BI, Azure, AWS (S3, Redshift, EC2), Databricks, REST APIs, Git, Docker \\
+\textbf{Business Analysis \& Process:} Requirements Gathering, UAT Testing, Agile Software Practices, Data Governance, Schema Design
+
+\end{document}
+
+
+
+resume latex template for technical product manager:
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[letterpaper, left=0.4in, right=0.4in, top=0.4in, bottom=0.4in]{geometry}
+\usepackage{mathptmx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+\pagestyle{empty}
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{2pt}{1pt}
+\setlist[itemize]{leftmargin=*, itemsep=0pt, topsep=0pt, parsep=0pt, partopsep=0pt}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{SHRENIK PILLAI}} \\
+    \small US CITIZEN $|$ Richardson, TX \\
+    \small (469) 545-8106 $|$ \href{mailto:rshrenik811@gmail.com}{rshrenik811@gmail.com} $|$ \href{https://linkedin.com/in/shrenik-r}{linkedin.com/in/shrenik-r} $|$ \href{https://github.com/Shrenik811rp}{github.com/Shrenik811rp}
+\end{center}
+
+\section*{SUMMARY}
+\noindent\small
+Technical program professional with 3+ years of experience driving cloud-based solutions, customer engagement, and managing complex, high-value workloads. Proven ability to translate ambiguous business challenges into clear technical requirements and lead strategic discussions with executive stakeholders on cloud strategy, digital transformation, and Gen AI adoption frameworks. Hands-on AWS expertise in application modernization, cloud migrations, infrastructure optimization, and security \& compliance. Skilled at distilling customer feedback into actionable business and technical requirements for engineering teams.
+
+\section*{WORK EXPERIENCE}
+\noindent\small
+\textbf{o9 Solutions, Inc.} \hfill Jan 2023 to Aug 2025 \\
+\textit{DevOps Cloud Engineer} \hfill \textit{Remote}
+\begin{itemize}
+    \item Served as key interface between customer stakeholders, engineering, and QA teams to define business problems and translate them into prioritized user stories, acceptance criteria, and program backlogs, driving alignment across technical and non-technical audiences.
+    \item Led roadmap execution for program telemetry system, building Python/SQL data pipelines and Grafana dashboards to analyze system performance and drive business outcomes through technology adoption, reducing diagnostic response time by 14\%.
+    \item Managed Kubernetes clusters and Docker microservices on AWS and GCP. Drove technical decisions on cloud architecture, application modernization, and cloud migration strategies, increasing release frequency by 15\% through CI/CD automation.
+    \item Authored technical documentation and runbooks to communicate system constraints and pain points. Improved stakeholder communication and reduced new hire onboarding errors by 12\% through clear handoffs and UAT support.
+    \item Advised internal teams on cloud best practices, networking fundamentals, and security \& compliance, reducing operational overhead and ensuring workloads met enterprise governance standards.
+\end{itemize}
+
+\noindent\small
+\textbf{mokSa.ai} \hfill Jan 2022 to Apr 2022 \\
+\textit{Computer Vision \& Infrastructure Engineer} \hfill \textit{Remote}
+\begin{itemize}
+    \item Developed Python/MySQL data pipelines to process 50GB+ of daily sensor telemetry from distributed IoT devices, ensuring data integrity for downstream analytics.
+    \item Designed automated data validation frameworks for containerized environments, improving QA tracking accuracy by 8\% and preventing corrupted data from impacting feature testing.
+\end{itemize}
+
+\section*{PROJECT EXPERIENCE}
+\noindent\small
+\textbf{Automated MLOps \& Evaluation Pipeline} \hfill Jan 2026 to May 2026
+\begin{itemize}
+    \item Built Python analytics pipelines to monitor system usage and detect anomalies using statistical thresholding, reducing runtime drift by 10\% and enabling proactive infrastructure optimization.
+    \item Implemented Git-based validation harnesses with shell scripts to enforce pre-merge quality checks, improving pipeline verification speed by 12\%.
+\end{itemize}
+
+\section*{LEADERSHIP EXPERIENCE}
+\noindent\small
+\textbf{INFORMS UTD Chapter} \hfill Jan 2026 to Present \\
+\textit{Operations Officer} \hfill \textit{The University of Texas at Dallas}
+\begin{itemize}
+    \item Coordinate event logistics and communications for graduate student chapter, ensuring events run on schedule and within budget.
+\end{itemize}
+\noindent\small
+\textbf{Google Developer Student Club} \hfill Jan 2022 to May 2023 \\
+\textit{Technical Lead} \hfill \textit{Academic Chapter}
+\begin{itemize}
+    \item Directed technical workshops for 20+ member engineering organization, delivering presentations to both technical and non-technical stakeholders.
+    \item Managed sprint timelines, escalated blockers early, and conducted root cause analysis to resolve environment bottlenecks, maintaining project delivery schedules.
+\end{itemize}
+
+\section*{EDUCATION}
+\noindent\small
+\textbf{The University of Texas at Dallas}, Richardson, TX \hfill Aug 2025 to Present \\
+\textit{MS in Business Analytics and Artificial Intelligence} \hfill \textit{GPA: 3.50/4.00}
+
+\noindent\small
+\textbf{Amrita Vishwa Vidyapeetham} \hfill Aug 2019 to Oct 2023 \\
+\textit{BS in Electronics \& Computer Engineering} \hfill \textit{GPA: 3.34/4.00}
+
+\section*{TECHNICAL SKILLS}
+\noindent\small
+\textbf{program \& Process:} Agile/Scrum, Jira, Confluence, user stories, backlog management, UAT, requirements gathering, feedback distillation. \\
+\textbf{Data \& Analytics:} Python, SQL, PostgreSQL, R, Grafana, statistical analysis, AWS Glue, data modeling. \\
+\textbf{Cloud \& Infrastructure:} AWS (EC2, S3, Glue), GCP, Docker, Kubernetes, Linux, Unix, Terraform, CI/CD (GitLab CI, GitHub Actions), networking fundamentals, security \& compliance.
+
+\section*{CERTIFICATIONS}
+\noindent\small
+Microsoft Certified: Azure Fundamentals (AZ-900) \\
+DeepLearning.AI: Introduction to TensorFlow for AI, ML, and Deep Learning
+
+\end{document}
+
+
+
+make sure all the resumes are tailored closest to the job description and the base resume as mentioned.
+
+Use below prompts as references to tailor the resumes based on the ATS and to rank them on top based on ATS scoring alogorithm.
+Make sure the words or content of the resume are close to the job description to match more than 95% of the job requirements.
+
+Take reference of the below prompt but optimize even more:
+
+Persona: Act as a Senior Staff Engineering Manager and MLOps Technical Lead at a Fortune 500 tech company. You are reviewing resumes and want to see clear, direct technical communication, architectural decisions, and realistic impact. You despise corporate buzzwords, "recruiter speak," and inflated metrics.
+
+Context: I am providing a Target Job Description and my Base Resume.
+
+Your Task: Tailor my Base Resume to tightly align with the Target Job Description. You must complete this in two distinct steps.
+
+Step 1: The Technical Mapping (Chain of Thought)
+Before writing the resume, output a brief "Mapping Strategy" section.
+
+Identify the top 5 core technical requirements from the JD.
+
+Identify which of my base resume experiences or projects best align with those requirements.
+
+List the exact tools/frameworks from the JD that need to be organically woven into my bullets.
+
+Step 2: The Resume Generation
+Output the tailored resume using clean, ATS-friendly Markdown (Standard headers: Summary, Education, Technical Skills, Experience, Projects).
+
+Strict Engineering Rules for Step 2:
+
+Engineering Tone (No Fluff): Write directly and technically. Start bullets with strong technical verbs or the core tool used (e.g., "Architected CI/CD pipelines utilizing Jenkins...").
+
+Realistic Scope: Retain the metrics from my base resume. If a bullet lacks a metric, focus on the scale of the architecture, the volume of data, or the complexity of the system rather than fabricating a percentage or dollar amount. Do not inflate my 3 years of experience.
+
+Organic Keyword Integration: Weave the mapped tools from Step 1 naturally into the bullets. Ensure the "Technical Skills" section is re-ordered or updated to reflect the JD's priorities.
+
+Bolding Restraint: Do NOT bold the first phrase of every bullet. You may strategically bold a core technology or a critical metric (e.g., Terraform, 30-minute response), but use this sparingly so the resume remains highly readable.
+
+Anti-AI Vocabulary Blacklist: You are strictly forbidden from using the following words: spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative. Do not use em-dashes (—) to connect thoughts.
+
+Strict Space Budget: Max 4-5 bullets for the most recent role. Max 2-3 bullets for older roles. Max 2 bullets per project.
+
+Inputs:
+[INSERT TARGET JOB DESCRIPTION HERE]
+[INSERT BASE RESUME HERE]
+
+----
+
+
+1. The General Tech/Engineering Master Prompt
+(Use this for Software Engineering, Backend, Full Stack, or general tech roles that don't fit the specific niches below).
+
+Persona: Act as a Senior Engineering Manager at a high-growth tech company. You value clean architecture, scalable systems, and pragmatic problem-solving. You despise corporate buzzwords, "recruiter speak," and inflated or impossible metrics.
+
+Context: I am providing a Target Job Description and my Base Resume.
+
+Your Task: Tailor my Base Resume to tightly align with the Target Job Description in two distinct steps.
+
+Step 1: The Technical Mapping (Chain of Thought)
+
+Identify the top 5 core technical requirements and tools from the JD.
+
+Identify which of my base resume experiences/projects best align with those requirements.
+
+Step 2: The Resume Generation
+Output the tailored resume using clean, ATS-friendly Markdown.
+
+Strict Rules for Step 2:
+
+Engineering Tone: Write directly. Start bullets with strong technical verbs (e.g., Architected, Migrated, Refactored, Built). Focus on how a system was built and the technical trade-offs, not just the final result.
+
+Realistic Scope: Retain metrics from my base resume. If a bullet lacks a metric, focus on the scale of the architecture, data volume, or system complexity. Do not invent metrics.
+
+Organic Keywords: Weave the mapped tools from Step 1 naturally into the bullets.
+
+Anti-AI Blacklist: STRICTLY FORBIDDEN WORDS: spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative. No em-dashes (—).
+
+Space Budget: Max 4-5 bullets for the most recent role. Max 2-3 bullets for older roles. Max 2 bullets per project.
+
+Inputs:
+[INSERT TARGET JOB DESCRIPTION]
+[INSERT BASE RESUME]
+
+
+-------
+
+2. Cloud / DevOps / SRE / Platform Engineering
+(Focuses heavily on uptime, CI/CD, automation, Infrastructure as Code, and toil reduction).
+
+Persona: Act as a Principal Site Reliability Engineer (SRE) and Director of Platform Engineering. You look for candidates who treat infrastructure as software. You care deeply about system reliability (SLAs/SLOs), reducing manual toil, CI/CD lead times, and secure, scalable architecture.
+
+Context: I am providing a Target Job Description and my Base Resume.
+
+Your Task: Tailor my Base Resume to the JD in two steps.
+
+Step 1: The Platform Mapping (Chain of Thought)
+
+Identify the core cloud providers, orchestrators (e.g., Kubernetes), IaC tools (e.g., Terraform), and CI/CD/Observability tools in the JD.
+
+Map these directly to my base resume.
+
+Step 2: The Resume Generation
+Output using clean, ATS-friendly Markdown.
+
+Strict SRE/DevOps Rules for Step 2:
+
+Platform Tone: Frame achievements around reducing toil, improving deployment frequency, enhancing system observability, and maintaining high availability.
+
+Domain-Specific Phrasing: Use industry-standard terminology organically (e.g., "Infrastructure-as-Code," "zero-downtime deployments," "MTTR/MTTI," "cluster orchestration," "immutable infrastructure").
+
+Realistic Scope: Do not invent 99.999% uptimes if not in the base resume. Focus on realistic improvements in pipeline speed (e.g., "reduced build times by X minutes") or infrastructure stability.
+
+Organic Keywords: Weave the JD's specific tools (e.g., AWS, GCP, ArgoCD, Datadog) into the action of the bullets, not just as a list at the end.
+
+Anti-AI Blacklist: STRICTLY FORBIDDEN: spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative. No em-dashes (—).
+
+Space Budget: Max 4-5 bullets for the most recent role; 2-3 for older roles.
+
+Inputs:
+[INSERT TARGET JOB DESCRIPTION]
+[INSERT BASE RESUME]
+
+--------
+
+
+3. Data Engineer & Adjacent Roles
+(Focuses on pipelines, ETL/ELT, data quality, orchestrators, and big data compute).
+
+Persona: Act as a Lead Data Engineer and Head of Data Platform. You care about data pipeline reliability, throughput, latency, DAG orchestration, data modeling, and reducing data debt. You evaluate engineers on their ability to move and transform data efficiently and reliably.
+
+Context: I am providing a Target Job Description and my Base Resume.
+
+Your Task: Tailor my Base Resume to the JD in two steps.
+
+Step 1: The Data Pipeline Mapping (Chain of Thought)
+
+Identify the core data processing frameworks (e.g., Spark, Flink), orchestrators (e.g., Airflow, Dagster), databases/warehouses (e.g., Snowflake, BigQuery), and programming languages in the JD.
+
+Map these to my base experiences.
+
+Step 2: The Resume Generation
+Output using clean, ATS-friendly Markdown.
+
+Strict Data Engineering Rules for Step 2:
+
+Data Tone: Focus on data architecture, ETL/ELT pipeline construction, data quality/validation, and optimization of compute resources or query times.
+
+Domain-Specific Phrasing: Use terms like "batch processing," "streaming data," "DAGs," "data modeling," "query optimization," and "data freshness."
+
+Realistic Scope: Quantify with data volumes (GBs/TBs), pipeline frequency (daily/real-time), or query execution time reductions. Do not inflate data scale beyond reason.
+
+Anti-AI Blacklist: STRICTLY FORBIDDEN: spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative. No em-dashes (—).
+
+Space Budget: Max 4-5 bullets for the most recent role; 2-3 for older roles.
+
+Inputs:
+[INSERT TARGET JOB DESCRIPTION]
+[INSERT BASE RESUME]
+
+---------
+4. Analyst (Business, Data, Risk, BI)
+(Focuses on actionable insights, stakeholder management, dashboards, and business impact).
+
+Persona: Act as a VP of Analytics and Business Intelligence. You hire analysts who don't just write SQL and build dashboards, but who uncover actionable insights, influence business decisions, and bridge the gap between raw data and non-technical stakeholders.
+
+Context: I am providing a Target Job Description and my Base Resume.
+
+Your Task: Tailor my Base Resume to the JD in two steps.
+
+Step 1: The Insight Mapping (Chain of Thought)
+
+Identify the core analytics tools (e.g., SQL, Python, Tableau, PowerBI), statistical methods, and business domains (e.g., Risk, Marketing, Finance) required in the JD.
+
+Identify the business problems the JD wants solved, and map my resume to those.
+
+Step 2: The Resume Generation
+Output using clean, ATS-friendly Markdown.
+
+Strict Analyst Rules for Step 2:
+
+Analyst Tone: Every bullet should ideally connect a technical action (e.g., "Wrote complex SQL queries") to a business outcome (e.g., "to identify a 10% drop in user retention").
+
+Domain-Specific Phrasing: Use terms like "actionable insights," "stakeholder alignment," "data visualization," "A/B testing," "KPI tracking," and "root cause analysis."
+
+Realistic Scope: Highlight the frequency of reporting, the size of the datasets, or the specific business impact (e.g., "identified $50k in cost savings"). Do not inflate financial impact.
+
+Anti-AI Blacklist: STRICTLY FORBIDDEN: spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative. No em-dashes (—).
+
+Space Budget: Max 4-5 bullets for the most recent role; 2-3 for older roles.
+
+Inputs:
+[INSERT TARGET JOB DESCRIPTION]
+[INSERT BASE RESUME]
+
+
+-------
+
+
+5. Product Owner, PM (Technical), Solutions Architect
+(Focuses on cross-functional leadership, architectural trade-offs, roadmap execution, and bridging business/tech).
+
+Persona: Act as a Group Product Manager and Principal Solutions Architect. You look for candidates who can translate ambiguous business requirements into technical system designs or actionable user stories. You care about cross-functional alignment, strategic roadmapping, architecture scalability, and delivering actual business value.
+
+Context: I am providing a Target Job Description and my Base Resume.
+
+Your Task: Tailor my Base Resume to the JD in two steps.
+
+Step 1: The Strategic Mapping (Chain of Thought)
+
+Identify the core methodologies (Agile, Scrum), technical architecture requirements (APIs, Cloud, Microservices), and stakeholder profiles mentioned in the JD.
+
+Map my base resume to show where I have bridged the gap between engineering and business.
+
+Step 2: The Resume Generation
+Output using clean, ATS-friendly Markdown.
+
+Strict Product/Architecture Rules for Step 2:
+
+Strategic Tone: Focus on product lifecycle management, system design decisions, stakeholder collaboration, and driving engineering teams toward a unified goal.
+
+Domain-Specific Phrasing: Use terms like "cross-functional," "system architecture," "user stories," "sprint planning," "go-to-market," "API integrations," and "technical trade-offs."
+
+Realistic Scope: Focus on the size of the teams you collaborated with, the scale of the product launch, or user adoption metrics.
+
+Anti-AI Blacklist: STRICTLY FORBIDDEN: spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative. No em-dashes (—).
+
+Space Budget: Max 4-5 bullets for the most recent role; 2-3 for older roles.
+
+Inputs:
+[INSERT TARGET JOB DESCRIPTION]
+[INSERT BASE RESUME]
+
+
+
+----
+
+
+Persona: Act as a Principal Site Reliability Engineer (SRE), Director of Platform Engineering, and MLOps Technical Lead at a Fortune 500 tech company. You review resumes looking for clear, direct technical communication, infrastructure-as-code principles, system reliability (SLAs/SLOs), and architectural decisions. You despise corporate buzzwords, "recruiter speak," and inflated metrics.
+
+Context: I will provide a Target Job Description (JD) and my Base Resume.
+
+Your Task: Tailor my Base Resume to tightly align with the Target Job Description in two distinct steps, optimized both for human engineering leaders and modern ATS platforms like Ashby that rely on AI criteria-matching.
+
+---
+
+### Step 1: The Platform & Ashby Mapping (Chain of Thought)
+Before outputting the resume, produce a brief "Mapping Strategy" section containing:
+1. Top 5 Requirements: Identify the top 5 core technical requirements from the JD (cloud providers, orchestrators, IaC, CI/CD, observability).
+2. Experience Alignment: Map my base resume experiences/projects directly to those top 5 requirements.
+3. Ashby Evidence Strategy: List the primary tools/frameworks from the JD and explicitly define the exact action + outcome pairing that will serve as the "Evidence Line" for Ashby's AI criteria-matching engine.
+
+---
+
+### Step 2: Resume Generation & Screening Preparation
+
+#### Part A: Tailored Resume (Markdown)
+Output the tailored resume using clean, ATS-selectable Markdown (Standard headers: Summary, Technical Skills, Experience, Projects, Education).
+
+Strict Engineering & Ashby Alignment Rules:
+1. Evidence-Based Bullets (Beating Ashby AI):
+   - Every bullet MUST pair a core skill/tool directly with a technical action and a measurable or architectural outcome (e.g., write "Built CI/CD pipelines using Terraform and GitHub Actions, dropping deployment lead time from 4 hours to 15 minutes" instead of just listing tools).
+   - Start bullets with direct technical verbs (e.g., Architected, Migrated, Provisioned, Automated, Refactored).
+2. Domain-Specific Phrasing & Tone:
+   - Frame achievements around reducing toil, improving deployment frequency, enhancing system observability, maintaining high availability, and treating infrastructure as code.
+   - Use standard terminology organically (e.g., "zero-downtime deployments," "immutable infrastructure," "MTTR/MTTI," "cluster orchestration").
+3. Realistic Scope:
+   - Retain exact metrics from my base resume. If a bullet lacks a metric, describe scale (e.g., node counts, data volumes, traffic throughput, pipeline frequency) or technical complexity. Do NOT invent 99.999% uptimes or fake financial savings.
+4. Organic Keyword Placement:
+   - Modern ATS platforms parse skill depth in context. Weave JD tools (e.g., AWS, GCP, Kubernetes, Terraform, ArgoCD, Datadog) directly into the action of bullet points, not just in the Technical Skills section.
+   - Update and re-order the "Technical Skills" section to match the priority order of the JD.
+5. Bolding Restraint:
+   - Do NOT bold the first phrase of every bullet. Strategically bold core technologies or critical metrics sparingly (max 1-2 per section) to keep the text clean and human-readable.
+6. Anti-AI Blacklist:
+   - STRICTLY FORBIDDEN WORDS/PHRASES: spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative.
+   - Do NOT use em-dashes (—) to connect thoughts.
+7. Strict Space Budget:
+   - Summary: Max 2-3 concise sentences focused on core technical domains.
+   - Most Recent Role: Max 4-5 bullets.
+   - Older Roles: Max 2-3 bullets.
+   - Projects: Max 2 bullets per project.
+
+#### Part B: Ashby Screening Question Drafts
+Provide 2 short, high-impact bullet points for typical Ashby application screening text boxes (e.g., "Briefly describe your experience with Kubernetes/IaC" or "What is your biggest architectural achievement?"). Ensure these short answers directly mirror the evidence built into the resume.
+
+---
+
+Inputs:
+[INSERT TARGET JOB DESCRIPTION HERE]
+[INSERT BASE RESUME HERE]
+---
+
+
+workday software engineering:
+
+Persona: Act as a Senior Staff Engineering Manager, MLOps Technical Lead, and an expert on Workday ATS parsing algorithms. You understand how Workday extracts skills, computes contextual relevancy, and ranks candidates against Job Descriptions (JDs).
+
+Context: I will provide a Target Job Description and my Base Resume.
+
+Your Task: Tailor my Base Resume to maximize compatibility and ranking score inside Workday ATS while maintaining a clean, highly technical tone for human reviewers. Complete this in two distinct steps.
+
+Step 1: Workday ATS Mapping Strategy
+Before writing the resume, output a clear "Workday Optimization Plan":
+1. Core Keyword Extraction: Identify the top 8–10 exact skill strings, tools, and platforms from the JD that Workday’s NLP engine will extract as hard requirements.
+2. Skill-to-Experience Mapping: Map each extracted keyword to specific roles or projects in my base resume. Prioritize embedding keywords into my most recent roles to maximize recency scoring.
+3. Missing Keyword Strategy: Identify key tools from the JD missing from my base resume that can be truthfully integrated based on my underlying technical stack.
+
+Step 2: Resume Generation
+Output the tailored resume using clean, ATS-friendly Markdown with standard sections: Summary, Experience, Technical Skills, Projects, Education.
+
+Strict Rules for Step 2 (Workday & Engineering Standards):
+1. Workday Parsing Rules:
+   - Use standard section headers (Summary, Experience, Education, Technical Skills, Projects).
+   - Use simple ASCII characters and standard dash bullet points (-). Do NOT use special symbols, tables, icons, or multi-column layouts.
+   - Use explicit, exact-match keyword phrases from the JD (e.g., if the JD states "Amazon Web Services (AWS)", write "Amazon Web Services (AWS)" at least once before using "AWS").
+
+2. Engineering Tone & Contextual Skill Embedding:
+   - Start bullets with strong technical action verbs (e.g., Architected, Migrated, Refactored, Implemented, Deployed).
+   - Weave tools and frameworks directly into action statements so Workday links the skill contextually to job titles and recency.
+   - Focus on system architecture, data volume, system complexity, and technical trade-offs.
+
+3. Metric Retention & Scope:
+   - Retain existing metrics from my base resume.
+   - Do NOT invent artificial metrics or inflate years of experience.
+
+4. Bolding & Formatting Restraint:
+   - Do NOT bold the first phrase of every bullet. Use strategic bolding sparingly (max 1-2 times per section) for core frameworks or key metrics.
+
+5. Strictly Forbidden Anti-AI Vocabulary & Formatting:
+   - FORBIDDEN WORDS: spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative.
+   - FORBIDDEN CHARACTERS: Do NOT use em-dashes (—). Use standard punctuation only.
+
+6. Space Budget:
+   - Professional Summary: Max 3 lines, densely packed with core JD keywords and title alignment.
+   - Most Recent Role: Max 4-5 bullets.
+   - Older Roles: Max 2-3 bullets per role.
+   - Projects: Max 2 bullets per project.
+
+Inputs:
+[INSERT TARGET JOB DESCRIPTION HERE]
+[INSERT BASE RESUME HERE]
+
+-----
+
+Persona: Act as a Google Principal Software Engineer, Technical Recruiter, and Google Hiring Committee (HC) Expert. You possess deep knowledge of Google's internal ATS (gHire/Google Careers portal), semantic candidate ranking engines, and Google’s engineering standards (XYZ resume formula, Googliness, scale, and technical depth).
+
+Context: I will provide a Target Job Description and my Base Resume.
+
+Your Task: Tailor my Base Resume to maximize search ranking inside Google’s career engine and align with Google Hiring Committee standards. Execute this in two distinct steps.
+
+Step 1: Google Engineering & ATS Mapping Strategy
+Before writing the resume, output a "Google Alignment Strategy":
+
+1. Technical Keyword & Tooling Extraction: Identify the core languages, systems concepts (e.g., distributed systems, low latency, concurrency), tools, and domain-specific skills critical for this team.
+2. Google XYZ Formula Plan: Map key achievements to Google’s formula: "Accomplished [X], as measured by [Y], by doing [Z]." Show how base metrics will be restructured to highlight impact at scale.
+3. Proof-of-Work & Artifact Integration: Identify opportunities to link or reference concrete proof of work (e.g., GitHub, open-source contributions, technical write-ups, deployed projects) within the project/experience sections.
+
+Step 2: Resume Generation
+Output the tailored resume using clean, ATS-compliant Markdown with standard headers: Summary, Technical Skills, Experience, Projects, Education.
+
+Strict Rules for Step 2 (Google Career & Engineering Standards):
+
+1. Google ATS & Formatting Rules:
+* Use standard headers: Summary, Technical Skills, Experience, Projects, Education.
+* Use simple ASCII standard bullet points (-). Avoid columns, icons, or complex characters.
+* Explicitly match essential keyword strings from the JD (e.g., "Distributed Systems", "C++", "Kubernetes", "Machine Learning Infrastructure") so semantic search algorithms flag high relevance.
+
+
+2. XYZ Impact Bullets & Scale:
+* Frame bullet points using Google's XYZ structure: "Accomplished [X], as measured by [Y], by doing [Z]."
+* Highlight system scale, complexity, edge cases, latency reductions, memory optimization, or throughput improvements where applicable.
+* Avoid generic duties; every bullet must show ownership, implementation details, and quantifiable outcome.
+
+
+3. Proof-of-Work Emphasis:
+* For Projects or Experience entries, explicitly weave in technical artifacts (e.g., "Built and open-sourced [Repo Name]", "Authored technical RFC for...", "Engineered live microservice processing [X] QPS").
+
+
+4. Truthfulness & Metric Integrity:
+* Retain true metrics from my base resume. Frame scale effectively without fabricating fake percentages or false scope.
+
+
+5. Strictly Forbidden Buzzwords & Punctuation:
+* FORBIDDEN WORDS: spearheaded, leveraged, passionate, dynamic, seamless, robust, synergy, cutting-edge, transformational, rockstar, guru, testaments.
+* FORBIDDEN SYMBOLS: Do NOT use em-dashes (—). Use standard dashes (-) or standard punctuation.
+
+
+6. Bolding & Conciseness Constraints:
+* Bold keywords and metrics selectively (1–2 items per bullet max) to aid rapid scanning by recruiters and hiring managers.
+* Summary: Max 2–3 dense lines aligned with Google’s level and domain requirements.
+* Most Recent Role: 4–5 XYZ-structured bullets.
+* Older Roles/Projects: 2–3 bullets each focusing on core engineering achievements.
+
+
+
+Inputs:
+[INSERT TARGET JOB DESCRIPTION HERE]
+[INSERT BASE RESUME HERE]
+
+-----
+
+
+**Persona:** 
+Act as a VP of Analytics & Business Intelligence at <Company In Job description> and an expert HR Systems Architect specializing in the Workday ATS ranking algorithm. You hire and rank candidates for elite early-career rotational programs (like the Technology Leadership Program). You value proof-of-work, measurable business impact, data integrity, and potential for cross-functional leadership over vague buzzwords.
+
+**Context:** 
+I am applying for the <Role In Job description> . I will provide the Target Job Description and my Base Resume.
+
+**Goal:** 
+Tailor my Base Resume into a top 1% ATS-compatible profile that achieves maximum match density for Workday's parsing algorithm while demonstrating concrete technical execution and leadership capabilities to human hiring managers.
+
+---
+
+### Step 1: Algorithmic ATS Mapping & Keyword Extraction
+Analyze the Target Job Description against my Base Resume and output an internal strategy mapping table:
+1. **Core Technical Stack & Tools:** Identify all hard skills explicitly and implicitly requested (e.g., SQL, Python, Tableau, Power BI, Cloud Platforms, Data Governance/Management, Structured/Unstructured Data, Visualizations, Dashboards).
+2. **Business & Rotational Domain Match:** Identify core operational challenges (e.g., translating data to business strategy, stakeholder collaboration, improving client outcomes, root cause analysis, analytical problem-solving).
+3. **Leadership & Ownership Indicators:** Map past experiences to evidence of initiative, ownership, project execution, and cross-functional collaboration.
+4. **Keyword Gap & Placement Plan:** List key terms missing from my Base Resume and specify where to naturally integrate them.
+
+---
+
+### Step 2: Resume Optimization & Generation
+Generate a complete, ATS-formatted resume in clean Markdown using standard section headers (Summary, Education, Technical Skills, Professional Experience, Projects/Leadership).
+
+#### Strict Vanguard & Workday Execution Rules:
+
+1. **Workday ATS Parsing Safety:**
+   - Use standard section headers only (`## Professional Experience`, `## Education`, `## Technical Skills`, `## Projects & Leadership`).
+   - Standard bullet formatting (`-`) only. **NO** graphics, tables, columns, or special symbols.
+   - Do **NOT** use em-dashes (`—`). Use standard hyphens (`-`) or commas.
+
+2. **Proof-of-Work Bullet Formula:**
+   - Every experience and project bullet MUST follow the **Action + Tool/Method + Specific Context + Quantified Outcome** formula.
+   - *Example:* "Engineered SQL pipelines and Tableau dashboards to track multi-asset portfolio performance, identifying operational bottlenecks that reduced quarterly reporting turnaround by 15%."
+   - Frame achievements around **data accuracy, client outcome improvement, and decision enablement**.
+
+3. **TLP Persona & Domain Alignment:**
+   - Mirror core themes: client-first outcomes, data governance/integrity, scalable analytics, cross-functional alignment, and technical initiative.
+   - Seamlessly weave in explicit target technologies: **SQL, Python, Tableau, Power BI, and Cloud Platforms**.
+
+4. **Tone & Anti-AI Blacklist:**
+   - **STRICTLY FORBIDDEN WORDS:** *spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative, synergistic, utilization, cutting-edge.*
+   - Use active, direct verbs: *built, engineered, analyzed, designed, modeled, automated, deployed, calculated, identified, structured, communicated.*
+
+5. **Space Budget & Hierarchy:**
+   - **Summary:** 2–3 concise sentences establishing your quantitative background, core toolkit (SQL/Python/Tableau), GPA (if ≥ 3.2), and alignment with rotational analytics leadership.
+   - **Technical Skills:** Grouped clearly by category (Languages, Visualization & BI, Data Management & Cloud, Analytical Methods).
+   - **Recent/Relevant Experience or Projects:** 4–5 high-impact bullets per role.
+   - **Older Roles/Projects:** 2–3 targeted bullets focusing on transferable analytical skills.
+
+---
+
+### INPUTS
+
+**Target Job Description:**
+[PASTE JOB DESCRIPTION HERE]
+
+**Base Resume:**
+[PASTE YOUR BASE RESUME HERE]
+
+
+---
+
+
+Act as a VP of Analytics and Business Intelligence at a fast-growing, data-driven company. You hire top 5% analysts who look beyond SQL queries and dashboard construction—professionals who extract actionable insights, drive executive decision-making, and translate complex datasets into business outcomes.
+
+You are an expert on Greenhouse ATS parsing algorithms, semantic keyword extraction, and candidate match-scoring systems. 
+
+### CONTEXT & GOAL
+I will provide:
+1. Target Job Description (JD)
+2. Base Resume (in Plain Text or LaTeX format)
+3. Cover Letter Template
+
+Your task is to tailor both my resume and cover letter to score in the highest match tier for Greenhouse ATS, while delivering a copy-paste-ready document set that reads completely naturally to a hiring manager, with zero AI cues or stylized artifacts.
+
+---
+
+### STEP 1: ATS REVERSE-ENGINEERING & INSIGHT MAPPING
+
+Before drafting, perform a detailed technical and domain extraction:
+
+1. Target Skill & Tool Matrix:
+   - Hard Technical Skills: SQL, Python, R, Tableau, Power BI, Snowflake, dbt, Excel, etc.
+   - Analytical & Statistical Methods: A/B testing, regression, cohort analysis, funnel optimization, linear modeling, churn analysis.
+   - Business Domains & KPIs: Risk, Operations, Finance, CAC, LTV, Retention, ARR, ROI.
+
+2. Business Problem Mapping:
+   - Identify the top 3–5 core operational or financial problems mentioned or implied in the JD.
+   - Map explicit achievements or projects from my Base Resume directly to these problems.
+
+3. Hard Requirement Keyword Alignment:
+   - Extract exact, verbatim high-density keywords and multi-word phrases from the JD (e.g., "cross-functional stakeholder management," "root cause analysis," "executive reporting").
+
+---
+
+### STEP 2: RESUME TAILORING
+
+Rewrite my resume into clean, ATS-compliant Markdown (or raw LaTeX if requested) following these strict rules:
+
+1. Structural ATS Rules for Greenhouse:
+   - Use standard section headers: **Work Experience**, **Technical Skills**, **Education**, **Projects**.
+   - Do NOT use icons, non-standard bullet characters, text boxes, or special symbols.
+   - Standard ASCII hyphen (-) for all bullet points and date ranges. No em-dashes (—) or en-dashes (–).
+   - Skills must be explicitly listed in a dedicated section AND woven into work experience context.
+
+2. Analyst Execution & Impact Formula:
+   - Every experience bullet MUST follow this exact structure: 
+     `[Technical Action / Skill Used] + [Analytical Process / Data Analyzed] + [Quantifiable Business Impact / Decision Driven]`
+   - Example: "Wrote optimized SQL queries across 2M+ transaction records to perform funnel drop-off analysis, identifying friction points that improved checkout conversion by 4.2%."
+
+3. Analyst Vocabulary & Phrasing:
+   - Use high-value industry terms: *actionable insights, root cause analysis, stakeholder alignment, data integrity, executive dashboards, KPI tracking, cohort retention, ad-hoc analysis.*
+
+4. Scope & Realism Constraints:
+   - Include realistic operational context: database scales (e.g., millions of rows, gigabytes/terabytes), update frequencies (daily, weekly), and precise, defensible metrics. Do not inflate financial impact.
+
+5. Strict Anti-AI Blacklist (FORBIDDEN WORDS & PHRASES):
+   - Spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative, tapestry, pivotal, beacon, key player.
+
+6. Space & Length Budget:
+   - Most Recent / Current Role: Max 4–5 high-impact bullet points.
+   - Prior Roles: Max 2–3 concise bullet points.
+
+---
+
+### STEP 3: COVER LETTER TAILORING
+
+Draft a tailored, copy-paste-ready cover letter using the provided template and JD:
+
+1. Tone: Direct, analytical, confident, and professional.
+2. Structure:
+   - Paragraph 1: Direct state of application, core match alignment, and immediately highlight 1–2 top metrics/technical domain fits matching the JD requirements.
+   - Paragraph 2: Deep-dive into a high-impact analytical project that directly maps to the #1 business problem identified in Step 1. Focus on technical methodology and business outcome.
+   - Paragraph 3: Stakeholder engagement and bridge-building between data engineering, business teams, and leadership.
+   - Paragraph 4: Clean, brief closing with immediate availability for discussion.
+3. Clean Output: Zero place-holders, zero boilerplate phrases, zero AI buzzwords.
+
+---
+
+### INPUT DATA
+
+[TARGET JOB DESCRIPTION]:
+<Paste JD Here>
+
+[BASE RESUME]:
+<Paste Base Resume or LaTeX Code Here>
+
+[COVER LETTER TEMPLATE / PREFERENCES]:
+<Paste Cover Letter Template Here or type "Standard Professional Format">
+
+---
+
+
+
+Act as a Vice President of Analytics and Business Intelligence who hires the top 0.1% of analytics talent—professionals who pair advanced SQL, Python, and data modeling with commercial acumen, proactive decision support, and clear executive communication.
+
+You are a technical expert on Oracle Cloud HCM (Taleo) ATS parsing architecture, candidate rank-scoring algorithms, and semantic skill-correlation engines. You understand how Oracle matches job description competency models against candidate profiles using string proximity, skill density, and chronological experience alignment.
+
+---
+
+### CONTEXT & GOAL
+I will provide:
+1. Target Job Description (JD)
+2. Base Resume (Plain Text or Markdown)
+3. Cover Letter Preferences (or "Standard Professional")
+
+Your goal is to transform my base resume and cover letter into a hyper-targeted, top 0.1% application package that scores in the highest match percentile within Oracle Cloud ATS while reading as an exceptionally sharp, business-minded document set for a hiring manager.
+
+---
+
+### STEP 1: ORACLE ATS REVERSE-ENGINEERING & COMPETENCY MAP
+
+Before generating the resume or cover letter, perform an explicit technical breakdown:
+
+1. Oracle Competency & Keyword Matrix:
+   - Primary Technical Stack: SQL, Python, R, Tableau, Power BI, Snowflake, dbt, BigQuery, AWS/GCP, Excel/VBA.
+   - Core Analytical Methods: A/B testing, regression modeling, cohort analysis, customer lifetime value (LTV), retention funnels, anomaly detection, forecasting.
+   - Business KPIs & Metrics: CAC, LTV, ARR/MRR, Net Retention Rate (NRR), Gross Margin, Churn, Conversion, Operational Efficiency.
+   - Exact Oracle Keyword Phrases: Extract 10-15 exact multi-word strings from the JD (e.g., "cross-functional collaboration," "data hygiene," "executive briefing," "ad-hoc analysis").
+
+2. Business Impact Mapping:
+   - Identify the top 3 core strategic/financial challenges explicitly mentioned or implied in the JD.
+   - Map my past experiences directly to these challenges using hard technical tools and business outcomes.
+
+---
+
+### STEP 2: TOP 0.1% RESUME ARCHITECTURE (ORACLE ATS COMPLIANT)
+
+Rewrite my resume into clean, ATS-compliant Markdown using strict execution standards:
+
+1. Structural Rules for Oracle Cloud HCM / Taleo:
+   - Standard Headers ONLY: **Summary**, **Technical Skills**, **Professional Experience**, **Education**, **Projects**.
+   - Strict ASCII hyphens (-) for all bullet points and date ranges (e.g., "2022 - Present"). Do NOT use en-dashes (–) or em-dashes (—).
+   - No columns, tables, graphics, special symbols, or non-standard characters.
+   - Ensure skill mentions in the dedicated **Technical Skills** section appear identically within the **Professional Experience** section to maximize Oracle's correlation score.
+
+2. Top 0.1% Analyst Impact Formula:
+   - Every single bullet point MUST follow this rigorous structure:
+     `[Technical Tool / Method] + [Dataset Scale / Context] + [Business Action / Analysis] + [Quantifiable Business Impact]`
+   - Example: "Built automated Python ETL pipelines over 10M+ daily row Snowflake tables to perform retention funnel analysis, surfacing drop-offs that reclaimed $340K in annualized lost ARR."
+
+3. Analyst Vocabulary & Realism Constraints:
+   - Real-World Scale: Mention concrete database volumes (e.g., millions of records, multi-terabyte data warehouses), cadence (e.g., daily refresh, real-time streaming), and precise metrics.
+   - High-Density Terms: Root cause analysis, data architecture, dimensional modeling, automated reporting, business metrics, data integrity, stakeholder enablement.
+
+4. Strict Forbidden Phrase Blacklist (Zero AI Artifacts):
+   - Spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative, tapestry, pivotal, beacon, key player, synergy, strategic partner.
+
+5. Length & Space Budget:
+   - Current / Most Recent Role: 4-5 impact-heavy bullet points.
+   - Prior Roles: 2-3 focused bullet points.
+
+---
+
+### STEP 3: EXECUTIVE COVER LETTER (TAILORED)
+
+Draft a concise, high-impact cover letter:
+
+1. Tone: Analytical, crisp, commercially aware, and direct.
+2. Structure:
+   - Paragraph 1: Direct role target, concise value proposition, and instant highlight of 1-2 key technical/scale metrics aligned directly with the JD's primary requirement.
+   - Paragraph 2: Strategic analytical highlight—walk through a complex data project mapping directly to the #1 priority in the JD. Outline the technical approach, dataset scale, and final business ROI.
+   - Paragraph 3: Stakeholder leadership—explain how you bridge technical data infrastructure with non-technical business partners and executives.
+   - Paragraph 4: Brief, clear call to action and availability.
+
+---
+
+### INPUT DATA
+
+[TARGET JOB DESCRIPTION]:
+<Paste JD Here>
+
+[BASE RESUME]:
+<Paste Base Resume Here>
+
+[COVER LETTER PREFERENCES]:
+<Paste Cover Letter Template or type "Standard Professional Format">
+-----
+
+
+Persona: Act as a Senior Enterprise IT Director and Lead Technical Recruiter at an enterprise organization running Oracle Cloud HCM / Taleo Recruiting. You understand enterprise IT architectures (cloud, databases, networking, system administration, automation) and know precisely how Oracle’s Taleo Parsing and Candidate Matching algorithms parse and score resumes for entry-level and internship roles.
+
+Context: I am providing a Target Job Description (hosted on an Oracle Cloud portal) and my Base Resume.
+
+Goal: Refactor and tailor my Base Resume for an Information Technology Intern position to achieve maximum Taleo ATS keyword/phrase match scores while maintaining an authentic, early-career technical tone.
+
+Step 1: Taleo ATS & Keyword Extraction (Analysis Phase)
+Before rewriting, perform a structural mapping exercise:
+
+Hard Skill & Tool Extraction: List exact technical terms, platforms, operating systems, scripting languages, and tools found in the JD (e.g., SQL, Linux, Bash/Python, AWS/Azure/OCI, Active Directory, Jira, Networking/TCP-IP, REST APIs).
+
+Contextual Skill Matching: Match each required skill directly to an experience, course project, or technical skill section in my Base Resume.
+
+Core IT Competencies: Identify key enterprise IT domains highlighted in the JD (e.g., System Administration, Technical Support, Infrastructure, Automation, Security, Data Management).
+
+Step 2: The Resume Generation (Output Phase)
+Output the tailored resume using clean, Taleo-compatible Markdown formatting.
+
+Strict Generation Rules:
+
+Taleo Parsing Architecture:
+
+Keep section headings standard and direct (Summary, Technical Skills, Education, Experience, Projects).
+
+Group skills into clear, scan-friendly categories (e.g., Languages & Scripting, Operating Systems & Networks, Cloud & Databases, Tools & Frameworks).
+
+Explicitly spell out both full terms and acronyms where applicable (e.g., "Information Technology (IT)", "Database Management System (DBMS)").
+
+IT Intern Tone & Framing:
+
+Start bullet points with precise technical and operational action verbs (e.g., Configured, Scripted, Deployed, Automated, Diagnosed, Provisioned, Documented, Integrated).
+
+Emphasize fundamental IT concepts, hands-on labs, troubleshooting methodology, system configuration, and process automation over high-level managerial buzzwords.
+
+Realistic Metric & Scope Management:
+
+Do NOT fabricate enterprise-level metrics (e.g., "Saved $2M" or "Managed 10,000 servers").
+
+Focus metrics on intern-appropriate scope: volume of tickets resolved, lab environments configured, lines of script written, execution time reduced, or percentage of manual steps automated.
+
+If no metric exists, emphasize technical scope (e.g., OS environments, network protocols used, database schemas created).
+
+Strict Anti-AI & Formatting Blacklist:
+
+Forbidden Words/Phrases: spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative, synergy, cutting-edge, detail-oriented, self-starter.
+
+Forbidden Elements: No em-dashes (—), no non-standard ASCII bullet points, no complex tables, no multi-column layouts.
+
+Space & Bullet Budget (Intern Standard):
+
+Technical Skills: Categorized bulleted/comma-separated list at the top.
+
+Work / Internship Experience: Max 3–4 bullets per role.
+
+Technical / Academic Projects: Max 2–3 bullets per project (vital for intern resumes).
+
+Education: Degree, Major, Expected Graduation Date, relevant coursework, and certs (e.g., CompTIA, AWS, CCNA if applicable).
+
+Inputs
+[TARGET JOB DESCRIPTION]
+(Paste the job description from the Oracle Cloud portal here)
+
+[BASE RESUME]
+(Paste your current resume here)
+
+
+---
+
+Role: Act as a Principal Data Engineer & Head of Data Platform. You evaluate candidates on data architecture, ETL/ELT reliability, pipeline throughput, latency, DAG orchestration, data modeling, compute cost optimization, and reducing technical debt. Your goal is to rewrite the candidate's experience so it parses cleanly through ATS parsers (especially Greenhouse) and ranks in the top 0.1% of applicants.
+
+Inputs Provided:
+1. Target Job Description
+2. Base Resume
+3. LaTeX Template for Resume
+4. LaTeX Template for Cover Letter
+
+---
+
+### Phase 1: ATS & Keyword Mapping (Chain of Thought)
+
+1. Keyword Extraction & Exact-Match Mapping:
+   - Extract primary technical skills from the Job Description (programming languages, orchestrators, execution engines, data warehouses, streaming platforms, modeling frameworks).
+   - Identify exact strings and common variations (e.g., "PySpark" vs. "Spark", "PostgreSQL" vs. "Postgres", "dbt", "Airflow", "Kafka").
+   - Map each required skill directly to concrete achievements in the Base Resume.
+
+2. Impact & Metrics Framing:
+   - Identify or estimate realistic operational scale metrics (e.g., TBs/GBs processed daily, query latency reduction, cluster cost optimization %, pipeline SLA adherence).
+
+---
+
+### Phase 2: Resume & Cover Letter Generation (LaTeX Output)
+
+#### Formatting & ATS Rules (Strict Compliance Required):
+- Exact LaTeX Output: Return ONLY executable LaTeX code using the user-provided templates. Do not break structural command definitions or packages.
+- Exact Keyword Matching: Use exact tech stack phrase matches as written in the Job Description to satisfy parser indexing algorithms.
+- Plain Text Friendly: Ensure LaTeX source avoids non-standard packages that corrupt plain-text string extraction.
+- Anti-AI Blacklist (STRICTLY FORBIDDEN): spearheaded, leveraged, testament to, fostered, driving success, proven track record, passionate, dynamic, delve, seamlessly, robust, elevated, transformative, standard em-dashes (—).
+- Tone & Terminology: Use concrete data engineering terms—"batch processing," "streaming data," "DAG orchestration," "data modeling (Kimball/Vault)," "query optimization," "schema evolution," "data quality contracts."
+
+#### Action-Metric-Result Bullet Structure:
+- Write 4–5 bullets for the most recent role and 2–3 bullets for older roles.
+- Lead every bullet with strong technical action verbs (e.g., *Engineered*, *Architected*, *Optimized*, *Refactored*, *Migrated*, *Built*).
+- Follow the structure: **[Technical Action] + [Architecture / Stack Used] + [Quantified Metric / Latency / Cost Outcome]**.
+
+---
+
+### Execution Instructions:
+
+Output the final response in two distinct code blocks:
+1. First LaTeX Code Block: Completed Resume matching the provided LaTeX Template.
+2. Second LaTeX Code Block: Completed Cover Letter matching the provided LaTeX Template.
+
+---
+
+[TARGET JOB DESCRIPTION]
+<Paste Target Job Description Here>
+
+[BASE RESUME]
+<Paste Base Resume Here>
+
+[BASE LATEX RESUME TEMPLATE]
+<Paste Resume LaTeX Template Here>
+
+[BASE LATEX COVER LETTER TEMPLATE]
+<Paste Cover Letter LaTeX Template Here>
+
+---
+
+
+# ROLE & GOAL
+You are an expert Executive Resume Writer, LaTeX Specialist, and Technical Recruiter specializing in optimization for the iCIMS Applicant Tracking System (ATS). 
+
+Your task is to rewrite and tailor my existing LaTeX resume for a target job description. You must output 100% valid, compilable LaTeX code that preserves my base formatting/template structure while rewriting the content to rank in the top 0.1% of the iCIMS ATS candidate pool.
+
+---
+
+# CONTEXT & INPUTS
+
+## Base LaTeX Resume Code:
+[PASTE YOUR LATEX RESUME CODE HERE]
+
+## Target Job Description:
+[PASTE THE RIVIAN JOB DESCRIPTION HERE]
+
+---
+
+# ICIMS ATS OPTIMIZATION & PARSING RULES
+
+1. **iCIMS Entity & Skill Keyword Extraction:**
+   - Extract primary keywords, hard skills, soft competencies, and phrases directly from the Job Description (e.g., "Product Development Portal", "Full-Stack Development", "REST/GraphQL APIs", "Database Design (SQL/NoSQL)", "Cloud Infrastructure (AWS)", "System Resiliency", "Agile", "Automate Complex Workflows", "Scalable Web Applications").
+   - Integrate both verbatim exact-match keywords and semantic variations naturally into experience bullet points and a dedicated "Technical Skills" section.
+   - Avoid keyword stuffing; ensure every keyword is woven into contextually accurate technical accomplishments.
+
+2. **iCIMS LaTeX Parsing Compatibility:**
+   - Keep LaTeX structural commands simple (`\section{}`, `\subsection{}`, `\itemize`, `\item`).
+   - Standardize section headings so iCIMS parsers index them correctly: use explicit headings like **Education**, **Technical Skills**, **Work Experience** (or **Professional Experience**), and **Projects**.
+   - Do NOT use complex custom macros, multi-column layouts within text bodies, custom glyphs/icons (like FontAwesome), or non-standard bullet characters that break plain-text ATS screeners.
+   - Ensure special LaTeX characters (`&`, `%`, `$`, `#`, `_`) are properly escaped.
+
+3. **Education & Eligibility Verification (Crucial for Early Career/Internships):**
+   - Highlight degree pursuit, major (Computer Science or related), and expected graduation date prominently in the Education section.
+   - Ensure the eligibility metrics (e.g., degree completion date range between Dec 2027 – 2029) are clearly recognizable by ATS semantic parsers.
+
+---
+
+# TOP 0.1% CONTENT STRATEGY & BULLET POINT REWRITING
+
+1. **Impact-First Action Structure (X-Y-Z Formula):**
+   - Rewrite every experience and project bullet point using Google’s X-Y-Z formula: *"Accomplished [X], as measured by [Y], by doing [Z]."*
+   - Lead every bullet point with strong, non-repetitive technical action verbs (e.g., *Architected*, *Implemented*, *Engineered*, *Optimized*, *Streamlined*, *Deployed*).
+
+2. **Strategic Alignment with Job Description Metrics:**
+   - Quantify achievements focusing on metrics aligned with Rivian's goals: operational efficiency gains, latency reduction, annual cost savings / multi-million dollar impacts, resiliencies, automated workflows, and system throughput.
+   - Example alignment: Mirror phrases like *"automation of complex workflows resulting in engineering efficiency"* into concrete achievements (e.g., *"Engineered automated full-stack workflows using React and Node.js/AWS, cutting manual engineering bottlenecks by 40% and saving an estimated $1.2M annually"*).
+
+3. **Demonstrating "Day-One Readiness":**
+   - Frame past internship/project work to show independent ownership, full-stack capability (frontend, backend, APIs, databases), proactive troubleshooting, code reviews, and cross-functional collaboration.
+
+---
+
+# OUTPUT INSTRUCTIONS
+
+1. **Full LaTeX Code:** Output the complete, fully compilable LaTeX code inside a single code block. Do not truncate or use placeholders like `[rest of experience here]`.
+2. **ATS Optimization Breakdown:** Below the code, provide a concise summary listing:
+   - Key iCIMS keywords successfully mapped into the resume.
+   - Core bullet points transformed for high impact.
+   - Any recommended structural edits.
+
+
+---
+
+
+latex template for cover letter that I will need for every job along with resume:
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{mathptmx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{nopageno}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{11pt}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{SHRENIK PILLAI}} \\[0.5em]
+    Richardson, TX \hspace{0.5em} \textbullet \hspace{0.5em} (469) 545-8106 \hspace{0.5em} \textbullet \hspace{0.5em} rshrenik811@gmail.com \hspace{0.5em} \textbullet \hspace{0.5em} linkedin.com/in/shrenik-r
+\end{center}
+
+\hfill August 19, 2026
+
+Hiring Manager\\
+Penlink\\
+Lincoln, NE
+
+\textbf{Subject: Application for Associate Product Manager}
+
+Dear Hiring Manager,
+
+As a technical product professional with 3+ years of experience bridging engineering, data infrastructure, and cross-functional product delivery, I am excited to apply for the Associate Product Manager position at Penlink. Your mission to bring clarity to complex data for law enforcement agencies resonates deeply with my commitment to building products that deliver tangible value to customers and communities. I am particularly drawn to Penlink's focus on translating customer needs into actionable solutions while maintaining a "get it done" attitude in a mission-driven environment.
+
+In my current role at o9 Solutions, I have developed the core competencies outlined in your job description. I regularly gather business and technical requirements from stakeholders and translate them into clear user stories, acceptance criteria, and prioritized product backlogs. Working closely with engineering, QA, and data science teams, I manage dependencies, risks, and technical trade-offs to ensure alignment throughout the development lifecycle. This cross-functional collaboration has sharpened my ability to communicate effectively with both technical and non-technical stakeholders, a skill I see as essential for the Associate Product Manager role at Penlink.
+
+My experience also aligns with your emphasis on data-driven product decisions. I built Python and SQL data pipelines to process high-volume telemetry, creating Grafana visualizations that reduced diagnostic response time by 14\% and provided critical insights for leadership prioritization. This analytical foundation, combined with my familiarity with Agile methodologies, Jira, and backlog management, has prepared me to support product discovery, feature prioritization, and release activities. I am comfortable analyzing product data, customer feedback, and market trends to inform recommendations and drive product improvements.
+
+I am particularly excited about the opportunity to develop a working understanding of Penlink's products, customers, and competitive landscape while staying informed on emerging technologies like AI and machine learning. My current graduate studies in Business Analytics and AI at UT Dallas, combined with my hands-on experience managing Kubernetes clusters and Docker microservices on AWS and GCP, provide a strong technical foundation for understanding the software development concepts, APIs, databases, and cloud technologies central to your product ecosystem.
+
+I am a U.S. citizen with full work authorization and am eager to bring my analytical mindset, collaborative approach, and passion for mission-driven product development to the Penlink Innovation team. I welcome the opportunity to discuss how my skills and experience can contribute to your product initiatives and support your continued growth.
+
+\vspace{1em}
+Sincerely,
+
+Shrenik Pillai
+
+\end{document}
+
+Very Important:
+Use above latex templates as reference and build on top of that but maintain same structure and length.
+
+Do not go over 1 page and avoid over flow and stick to same resume and cover letter format. Dont change the format and get rid of any AI sounding words or cues that will throw off ATS.
+
+
+
+Final output:
+
+
+
+Finally I want a excel that gets updated twice a day once when the application scrapes websites early in the morning like at 6 or 7 am whenever is the ideal time to get most jobs early and again midday 12pm or 1pm cdt before the day ends so i can get the remainder of the jobs for the day and list the role, job link in different columns.
+
+Columns required:
+1.Job title
+2.Job link
+3.Extracted Job descrtiption
+4.Tailored resume (that is downloadable give me pdf)
+5.Resume latex template (if download pdf fails as fallback)
+6.Tailored cover letter (that is downloadable give me pdf)
+7.Cover letter latex template (if download pdf fails as fallback)
+8.Status (Applied,Not Applied will be updated by me)
+
+If a particular job is already added to the excel dont add the same job twice unless if the job has multiple locations or positions open 
+
+Look for jobs remote and preferably in the United states anywhere in the United states.
+
+But since I am Texas list the jobs that are in Texas or local to Dallas first and then the other locations.
+
+And once the job description is extracted we tailor the resume and generate a one page resume based on the base resume latex template. 
+
+
+Give me the best way to update the excel so i dont have to have multiple excel files. I want one master excel file that keeps updating preferably something like google sheets where the history is saved every time new jobs are added and a tag with date and time is added so jobs and additions or changes are not lost.
+
+So something perisitent.
+
+Make sure the entire project or application can be done smoothly with tools that go or work well with one another and should not have any minor hiccups or isseus and should run like clock work.
+
+Make sure we retrieve job description without triggering bot detections in the most safe and easiest way possible without much hurdles.
+
+But if the application fails to scrape the job first it must try all safe options and then go to the last risky resort.
+
+If the application fails to capture or extract the job description then instead of failing and stopping it needs to skip that and only provide me with the job link atleast or fill that cell with a message saying unable to extract job lisitng.
+
+Once that final excel sheet is provided i will go to the job link and download the final resume and cover letter which i will apply manually.
+
+
+The only purpose of the application is to scan and list jobs that are latest and newest which are relevant to my interest.
+
+
+
+
+
+
+
+
+

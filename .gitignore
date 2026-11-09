@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+*.tex
+*.pdf
+*.aux
+*.log
+*.out
+.env
+credentials.json
+token.json
+fallback_cache.csvcredentials.json
+google_cloud.txt

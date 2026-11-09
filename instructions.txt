@@ -1,0 +1,149 @@
+Here is the comprehensive, strict instruction set you can copy and paste directly into your AI coding assistant (like antigravity or Gemini Code Canvas) to build this application. It enforces local virtual environments, strict fallback loops, and exact architectural schemas without hallucination.
+
+---
+
+**Copy and paste the following prompt to your AI coder:**
+
+# Project Specification: Zero-Cost Automated Job Aggregator & ATS-Tailored Resume Generator
+
+**ROLE & DIRECTIVE:**
+You are an expert Python Software Architect and DevOps Engineer. Your task is to write the complete, production-ready codebase for a zero-cost job aggregation and resume tailoring pipeline.
+
+**STRICT GUARDRAILS (CRITICAL):**
+
+1. **Virtual Environment Only:** You must provide exact bash commands to create a local virtual environment (`python -m venv venv`) and activate it before providing any `pip install` commands. DO NOT suggest global installations.
+2. **Never Crash / Exit on Error:** The system processes jobs in a loop. If *any* step fails for a single job (scraping blocked, LLM timeout, LaTeX compilation fail), you must catch the exception, log the fallback data, and `continue` to the next job. The script must never halt the entire run.
+
+
+3. **No Hallucinations:** Stick exactly to the architecture, tools, and schemas defined below. Do not add unrequested databases (like SQLite or PostgreSQL) or paid APIs. We are strictly using Google Sheets, Google Drive, and Gemini 1.5 Pro free tier.
+
+
+
+---
+
+### 1. Architecture & Orchestration
+
+* **Compute:** GitHub Actions via an Ubuntu runner.
+
+
+* **Schedule:** Cron job running twice daily at 6:30 AM CDT and 12:30 PM CDT (configure the YAML to UTC equivalents).
+
+
+* **LaTeX Engine:** Install `texlive-latex-base` directly on the GitHub runner for PDF compilation.
+
+
+
+### 2. Data Ingestion & Tiered Scraping
+
+Write a scraping module targeting zero-bot-hurdle sources. Implement randomized delays (`time.sleep(random.uniform(1.5, 4.0))`) between requests.
+
+* **Sources:** GitHub Repositories (jobright-ai, SimplifyJobs, speedyapply, zapplyjobs raw markdowns), RSS Feeds (We Work Remotely), and public JSON APIs (Arbeitnow, RemoteOK).
+
+
+* **Tiered Extraction Logic:**
+* *Tier 1 (Safe):* Direct public ATS JSON endpoints (Greenhouse `boards-api.greenhouse.io`, Lever `api.lever.co`, Ashby) using standard `requests`.
+
+
+* *Tier 2 (Standard):* `requests` + `BeautifulSoup` for open job boards.
+
+
+* *Tier 3 (Risky - Last Resort):* Playwright headless browser for JavaScript-heavy sites like Workday or Taleo.
+
+
+
+
+* **Scraping Fallback:** If all tiers timeout or hit Cloudflare blocks, catch the exception, fill the "Extracted Job Description" variable with *"Unable to extract job listing"*, retain the job link, skip the LLM tailoring phase, and proceed to the next job in the loop.
+
+
+
+### 3. Filtering & Deduplication Engine
+
+Before processing, connect to Google Sheets via the `gspread` library and fetch existing "Job Link" and "Job Title" columns to create a local deduplication set. Skip any job URL that already exists in the sheet.
+
+Apply these strict filters to new jobs:
+
+* **Seniority:** Exclude descriptions requiring more than 4 years of experience.
+
+
+* **Role Match:** Include Intern, Trainee, Co-op, DevOps, SRE, Cloud Engineer, Data Analyst, Price Analyst, Business Analyst, Data Engineer, Product Manager, MLOps, DataOps, Technical Sales, SWE. Any title ending with "Analyst" is valid EXCEPT "Marketing" or "Sales" Analyst.
+
+
+* **Location Priority:** Sort the finalized list to process Texas (Dallas/Richardson) first, US Remote second, and other US locations third.
+
+
+
+### 4. LLM Tailoring (Gemini 1.5 Pro)
+
+Integrate the `google-generativeai` SDK.
+
+* **ATS Fingerprinting:** Identify the ATS platform from the URL (e.g., `.myworkdayjobs.com`, `boards.greenhouse.io`, `.icims.com`).
+
+
+* **Prompt Injection:** Inject the base LaTeX template that matches the role, the extracted Job Description, and the ATS-specific persona prompt (e.g., Workday optimization rules vs Greenhouse rules).
+
+
+* **Text Cleaning:** Implement a strict regex pre-processor on the LLM output to replace unescaped ampersands (`&`) with `\&` and dollar signs (`$`) with `\$` to prevent LaTeX fatal errors. Ensure the AI is instructed to avoid buzzwords (e.g., spearheaded, leveraged) and keep output strictly under 1 page.
+
+
+* **LLM Fallback:** If the API times out or returns malformed text, bypass the AI phase and inject the completely unmodified Base Resume and Cover Letter LaTeX strings.
+
+
+
+### 5. Document Compilation & Google Drive
+
+* Write the LLM output to `.tex` files and execute `pdflatex` via Python's `subprocess`.
+
+
+* Upload the resulting PDFs to a specific Google Drive folder using `google-api-python-client` or `PyDrive2`, setting permissions to "Anyone with the link can view".
+
+
+* **Compilation Fallback:** Capture the `subprocess` exit code. If `pdflatex` throws a fatal error, abandon the PDF upload (leave PDF columns blank). Successfully output the raw LaTeX code strings into the respective "LaTeX Template" columns in the sheet so they can be manually compiled later.
+
+
+
+### 6. Google Sheets Persistence (Master Database)
+
+Append processed jobs row-by-row to the Master Google Sheet using `gspread`.
+**Required Columns & Mapping:**
+
+1. Timestamp (Date and time of the run, e.g., 2026-11-07 06:30:00 CDT)
+
+
+2. Job Title
+
+
+3. Location
+
+
+4. Job Link
+
+
+5. Extracted Job Description
+
+
+6. Tailored Resume PDF (Google Drive Link)
+
+
+7. Resume LaTeX Template (Raw code fallback)
+
+
+8. Tailored Cover Letter PDF (Google Drive Link)
+
+
+9. Cover Letter LaTeX Template (Raw code fallback)
+
+
+10. Status (Default: "Not Applied")
+
+
+
+* **API Outage Fallback:** If the `gspread` append fails due to rate limits or network issues, serialize the row data to a local `fallback_cache.csv` file. Instruct the GitHub Action to save this CSV as an artifact. On the next cron run, the script must first check for this CSV, upload the missed rows to Google Sheets, and delete the cache before beginning the new scrape.
+
+
+
+### Expected Deliverables from the AI:
+
+1. Exact bash commands for virtual environment setup and dependencies (`requirements.txt`).
+2. The complete Python pipeline code (`main.py`) with heavily commented `try/except` blocks handling the defined fallbacks.
+3. The GitHub Actions YAML workflow file (`.github/workflows/job_scraper.yml`).
+4. Instructions on which Google Cloud API credentials need to be stored in GitHub Secrets.

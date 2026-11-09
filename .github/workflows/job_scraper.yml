@@ -1,0 +1,75 @@
+name: Twice-Daily Job Ingestion & Resume Aggregator
+
+on:
+  schedule:
+    # Runs at 11:30 UTC (6:30 AM CDT) and 17:30 UTC (12:30 PM CDT)
+    - cron: '30 11,17 * * *'
+  workflow_dispatch:
+    inputs:
+      job_limit:
+        description: 'Limit number of jobs to process (0 for unlimited)'
+        required: false
+        default: '0'
+
+jobs:
+  run-job-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install System Dependencies (LaTeX & Fonts)
+        run: |
+          sudo apt-get update
+          # texlive-fonts-recommended is CRITICAL for the mathptmx (Times New Roman) package
+          # texlive-latex-extra is CRITICAL for enumitem and titlesec packages
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra
+
+      - name: Restore Fallback Cache Artifact (If Exists)
+        uses: actions/download-artifact@v4
+        with:
+          name: fallback-cache
+        continue-on-error: true
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          playwright install --with-deps chromium
+
+      - name: Decode Google Cloud Credentials
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          echo "$GCP_SA_KEY" | base64 --decode > credentials.json
+
+      - name: Run Master Pipeline
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_SHEET_NAME: ${{ secrets.GOOGLE_SHEET_NAME }}
+          GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
+        run: |
+          if [ "${{ github.event.inputs.job_limit }}" != "0" ] && [ "${{ github.event.inputs.job_limit }}" != "" ]; then
+            python main.py --limit ${{ github.event.inputs.job_limit }}
+          else
+            python main.py
+          fi
+
+      - name: Upload Fallback Cache Artifact (For Next Run)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fallback-cache
+          path: fallback_cache.csv
+          retention-days: 1
+
+      - name: Shred Credentials
+        if: always()
+        run: rm -f credentials.json
