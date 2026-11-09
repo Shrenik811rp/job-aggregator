@@ -62,6 +62,15 @@ jobs:
             python main.py
           fi
 
+      - name: Upload Generated Application PDFs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tailored-resumes-and-cover-letters-${{ github.run_id }}
+          path: output/*.pdf
+          retention-days: 14
+          if-no-files-found: ignore
+
       - name: Upload Fallback Cache Artifact (For Next Run)
         if: always()
         uses: actions/upload-artifact@v4

@@ -10,8 +10,8 @@ from src.templates.manager import get_base_cover_letter, get_template_for_role
 
 logger = logging.getLogger(__name__)
 
-PRIMARY_MODEL_NAME = "gemini-2.0-flash"
-FALLBACK_MODEL_NAME = "gemini-1.5-flash"
+PRIMARY_MODEL_NAME = "gemini-2.5-flash"
+FALLBACK_MODEL_NAME = "gemini-2.5-pro"
 
 # Configure Google Generative AI
 try:
@@ -214,7 +214,7 @@ ADDITIONAL CONSTRAINTS:
 
 
 def _generate_with_fallback(prompt: str) -> str:
-    """Attempt content generation with primary model, falling back to gemini-1.5-flash on 404/NotFound."""
+    """Attempt content generation with primary model, falling back to gemini-2.5-pro on 404/NotFound."""
     global model, fallback_model
 
     if model is not None:
@@ -257,7 +257,7 @@ def tailor_application(job_title: str, job_description: str, ats_type: str) -> T
 
     - Resolves base templates via templates manager.
     - Fast fallback: if job_description is 'Unable to extract job listing' or empty, returns unmodified templates.
-    - Dynamic fallback: attempts primary model (gemini-2.0-flash), falls back to gemini-1.5-flash on 404.
+    - Dynamic fallback: attempts primary model (gemini-2.5-flash), falls back to gemini-2.5-pro on 404.
     - Surgical regex injection: extracts XML tags (<summary>, <experience>, <projects>, <skills>, <company>, <role>, <body_paragraphs>)
       and injects them into the base templates, leaving preambles, layouts, and candidate headers 100% untouched.
     - Robust error handling: returns base templates on timeout, quota errors, missing tags, or parsing anomalies.

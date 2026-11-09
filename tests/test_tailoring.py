@@ -180,7 +180,7 @@ class TestTailoringEngine(unittest.TestCase):
     @patch("src.tailoring.engine.model")
     def test_tailor_application_model_404_fallback(self, mock_model, mock_fallback_model):
         # Primary model returns 404 NotFound
-        mock_model.generate_content.side_effect = Exception("404 models/gemini-2.0-flash is not found for API version v1beta")
+        mock_model.generate_content.side_effect = Exception("404 models/gemini-2.5-flash is not found for API version v1beta")
 
         # Fallback model succeeds with XML tags
         mock_fb_resume = MagicMock()
